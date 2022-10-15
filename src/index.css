@@ -1,3 +1,22 @@
+:root {
+  --bg-color: #ddd;
+  --accent-bg-color: #666;
+  --bdr-color: #333;
+
+  --color: black;
+  --accent-color: white;
+
+  --bar-height: 4em;
+
+  --border-wide: 3px;
+  --border-thin: 1px;
+
+  --border-light-color: #e3e3e3;
+  --border-dark-color: #969696;
+
+  font-size: 1.1rem;
+}
+
 *,
 *::before,
 *::after {
@@ -11,13 +30,26 @@ body {
 
 #root {
   height: 100vh;
-  padding-block: 10em;
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: #999;
 }
 
-.hidden {
-  visibility: hidden;
+button {
+  cursor: pointer;
+  padding-inline: .3em;
+  border-top-color: var(--border-light-color);
+  border-left-color: var(--border-light-color);
+  border-bottom-color: var(--border-light-color);
+  border-right-color: var(--border-light-color);
+  background-color: var(--bg-color);
+  font-size: 1rem;
+  font-family: serif;
+  color: var(--color)
+}
+
+button:disabled {
+  cursor: default;
+  color: var(--accent-bg-color) !important;
 }

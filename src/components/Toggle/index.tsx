@@ -1,5 +1,6 @@
-import { Activatable, Classable, Clickable } from '../types';
-import { cn } from '../utils';
+import { cn } from '../../utils';
+import { Activatable, Classable, Clickable } from '../../types';
+import './Toggle.css'
 
 interface ToggleProps
   extends Classable,

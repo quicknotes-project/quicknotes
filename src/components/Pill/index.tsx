@@ -1,16 +1,15 @@
 import React from 'react';
-import cn, { Argument as ClassArgument } from 'classnames';
-import { Substitutable } from '../types';
+import { cn } from '../../utils';
+import { Classable, HasValue, Substitutable } from '../../types';
+import './Pill.css'
 
-interface PillProps extends Substitutable {
-  value: string;
+interface PillProps extends Substitutable, Classable, HasValue<string> {
   color: string;
-  className?: ClassArgument;
 }
 
 export default function Pill({ as, value, color, className }: PillProps) {
   return React.createElement(
-    as,
+    as || 'li',
     {
       className: cn('pill', className),
       style: {

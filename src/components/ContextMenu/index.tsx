@@ -1,5 +1,6 @@
-import { Classable, HasCoords, Nestable } from '../types';
-import { cn } from '../utils';
+import { cn } from '../../utils';
+import { Classable, HasCoords, Nestable } from '../../types';
+import './ContextMenu.css'
 
 interface ContextMenuProps extends HasCoords, Nestable, Classable {}
 

@@ -1,0 +1,30 @@
+.tool-bar {
+  padding: .2em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: var(--border-thin) solid #333;
+  background-color: var(--accent-bg-color);
+}
+
+.tool-bar-controls {
+  display: flex;
+  gap: .3em;
+}
+
+.user-info {
+  margin-inline: .3em;
+  color: white;
+}
+
+.user-name {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  color: #80acf7;
+}
+
+.user-name:hover {
+  cursor: pointer;
+  text-decoration-style: solid;
+  color: #4c89f4;
+}

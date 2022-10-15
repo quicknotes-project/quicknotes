@@ -1,0 +1,28 @@
+.modal {
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  /* background-color: rgba(0, 0, 0, .7); */
+}
+
+.modal-content {
+  width: min(40%, 300px);
+  padding: 1em 1.5em;
+  translate: 0 -30%;
+  background-color: #ddd;
+  /* border: var(--border-thin) solid #333; */
+  box-shadow: .4em .4em #555;
+}
+
+.modal-controls {
+  width: 100%;
+  /* padding-top: 1.5em; */
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+}

@@ -1,0 +1,13 @@
+.button-select {
+  padding: .3em;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3em
+}
+
+.button-select-option.active {
+  /* border-color: #333; */
+  border-style: inset;
+  background-color: var(--accent-bg-color);
+  color: var(--accent-color);
+}

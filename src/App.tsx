@@ -1,11 +1,18 @@
-import { useState } from 'react';
-import Pill from './components/Pill';
-import { cn, formatDate, generateColor } from './utils';
+import React, { useState } from 'react';
+import TagEl from './components/Tag';
 import Modal from './components/Modal';
-import Editable from './components/Editable';
-import './App.css';
+import NoteEl from './components/Note';
 import Toggle from './components/Toggle';
+import Editable from './components/Editable';
+import ToolBar from './components/ToolBar';
+import SideBar from './components/SideBar';
+import SearchBar from './components/SearchBar';
 import InlineForm from './components/InlineForm';
+import ButtonSelect from './components/ButtonSelect';
+import { cn, generateRandomColor, renderIf } from './utils';
+import './App.css';
+
+const fontFamilies = ['serif', 'sans-serif', 'monospace', 'cursive'] as const;
 
 const listNames = ['notes', 'tags'] as const;
 
@@ -45,13 +52,34 @@ function NewNote(
 }
 
 const tags = {
-  cool: NewTag('cool', generateColor()),
-  awesome: NewTag('awesome', generateColor()),
+  cool: NewTag('cool', '#AFBC9A'),
+  awesome: NewTag('awesome', '#8CACB6'),
+  wow: NewTag('wow', generateRandomColor()),
+  nice: NewTag('nice', generateRandomColor()),
+  smth: NewTag('smth', generateRandomColor()),
 };
 
 const mockNotes: Note[] = [
-  NewNote('school', 'hahaha i love school', [tags.cool, tags.awesome]),
-  NewNote('foo', 'bar', [tags.cool, tags.awesome, tags.awesome, tags.awesome]),
+  NewNote(
+    'school',
+    'hahaha i love school',
+    [tags.cool, tags.awesome],
+    new Date(Date.parse('2022-10-01')),
+    new Date(Date.parse('2022-10-01'))
+  ),
+  NewNote(
+    'foo',
+    'bar',
+    [tags.cool, tags.awesome, tags.awesome, tags.awesome],
+    new Date(Date.parse('2022-09-30')),
+    new Date(Date.parse('2022-09-30'))
+  ),
+  NewNote('something', 'something', [tags.nice, tags.wow]),
+  NewNote('something', 'something'),
+  NewNote('something', 'something'),
+  NewNote('something', 'something'),
+  NewNote('something', 'something'),
+  NewNote('something', 'something'),
   NewNote('something', 'something'),
 ];
 
@@ -64,7 +92,7 @@ export default function App() {
 
   const [notes, setNotes] = useState<Note[]>(mockNotes);
 
-  const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const [showFontFamilies, setShowFontFamilies] = useState(false);
 
@@ -78,14 +106,23 @@ export default function App() {
 
   const [searchTags, setSearchTags] = useState<Tag[]>();
 
+  const tags = notes
+    .map((note) => note.tags)
+    .flat()
+    .filter(
+      // will be unnecessary
+      (tag, index, arr) =>
+        !arr.some((t, i) => tag.title === t.title && index > i)
+    );
+
   const getCurrentNote = () =>
     currentNoteID < 0 ? null : notes[currentNoteID];
 
-  const updateCurrentNote = (trasnform: (prev: Note) => Note) => {
+  const updateCurrentNote = (transform: (prev: Note) => Note) => {
     setNotes((state) => {
       const prev = state.find((_, i) => i === currentNoteID);
       return prev
-        ? state.map((n, i) => (i === currentNoteID ? trasnform(prev) : n))
+        ? state.map((n, i) => (i === currentNoteID ? transform(prev) : n))
         : state;
     });
   };
@@ -98,166 +135,148 @@ export default function App() {
     setNotes((state) => [note, ...state]);
   };
 
+  const deleteNote = (index: number) => {
+    setNotes((state) => state.filter((_, i) => i !== index));
+  };
+
   return (
     <div className="container">
-      <div className="tool-bar">
-        <button
-          onClick={() => {
-            prependNotes(NewNote('New note', '', [], new Date(), new Date()));
-            setCurrentNoteID(0);
-          }}
-        >
-          New
-        </button>
-        <div className="user-info">
-          Hello, <span className="user-name">{userName}</span>
-        </div>
-      </div>
+      <ToolBar>
+        <ToolBar.Controls>
+          <button
+            onClick={() => {
+              prependNotes(NewNote('New note', '', [], new Date(), new Date()));
+              setCurrentNoteID(0);
+            }}
+          >
+            New
+          </button>
+        </ToolBar.Controls>
+        <ToolBar.UserInfo>
+          Hello, <ToolBar.UserInfo.UserName value={userName} />
+        </ToolBar.UserInfo>
+      </ToolBar>
+
       <main>
-        <div className="list-header-wrapper">
-          <h3 className="list-header">{activeListName}</h3>
-        </div>
+        <SideBar.Header value={activeListName} />
 
-        <div className="note-header">
-          {/* <h3>{ getCurrentNote()?.title}</h3> */}
-          <div className="note-title-wrapper">
-            {getCurrentNote() && (
-              <>
-                <Toggle
-                  active={titleEditing}
-                  onClick={() => {
-                    setTitleEditing((state) => !state);
-                    document.getElementById('inline-form-note-title')?.focus();
-                  }}
-                  label="🖉"
-                  labelAlt="✓"
-                />
-                <Editable
-                  editable={titleEditing}
-                  as="h3"
-                  className="note-title"
-                  name="note-title"
-                  value={getCurrentNote()?.title || ''}
-                  onChange={(e) => {
-                    e.currentTarget.style.width = `${e.currentTarget.value.length}ch`;
-                    updateCurrentNote((n) => ({ ...n, title: e.target.value }));
-                  }}
-                />
-              </>
-            )}
-          </div>
-          <div className="note-controls">
-            <button className="note-control">edit</button>
-            <button
-              className="note-control danger"
-              onClick={() => {
-                setShowModal(true);
-              }}
-            >
-              delete
-            </button>
-          </div>
-        </div>
+        {renderIf(
+          currentNoteID >= 0,
+          <NoteEl.Header onDoubleClick={() => setCurrentNoteID(-1)}>
+            <NoteEl.Header.Title>
+              <Toggle
+                active={titleEditing}
+                onClick={() => {
+                  setTitleEditing((state) => !state);
+                }}
+                label="🖉"
+                labelAlt="✓"
+              />
+              <Editable
+                editable={titleEditing}
+                as="h3"
+                className="note-title"
+                name="note-title"
+                value={getCurrentNote()?.title || ''}
+                onChange={(e) => {
+                  e.currentTarget.style.width = `${e.currentTarget.value.length}ch`;
+                  updateCurrentNote((n) => ({ ...n, title: e.target.value }));
+                }}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setTitleEditing(false);
+                }}
+              />
+            </NoteEl.Header.Title>
+            <NoteEl.Header.Controls>
+              <button
+                className="note-control danger"
+                disabled={currentNoteID < 0}
+                onClick={() => {
+                  setShowDeleteModal(true);
+                }}
+              >
+                delete
+              </button>
+            </NoteEl.Header.Controls>
+          </NoteEl.Header>,
+          <NoteEl.Header />
+        )}
 
-        <div className="list-container">
-          <div id="search-bar">
-            {(activeListName === 'notes' && (
+        <SideBar>
+          <SearchBar>
+            {renderIf(
+              activeListName === 'notes',
               <input
                 type="text"
                 name="query"
                 placeholder="Search..."
                 id="search-query"
-              />
-            )) || (
+              />,
               <span id="search-placeholder">Click on tag to search...</span>
             )}
-          </div>
-          <ul className="list">
-            {(activeListName === 'notes'
-              ? notes
-              : notes
-                  .map((note) => note.tags)
-                  .flat()
-                  .filter(
-                    (tag, index, arr) =>
-                      !arr.some((t, i) => tag.title === t.title && index > i)
-                  )
-            ).map((item, index) =>
-              activeListName === 'notes' ? (
+          </SearchBar>
+
+          {renderIf(
+            activeListName === 'notes',
+            <SideBar.List className="note-list">
+              {notes.map((note, index) => (
                 <li
-                  key={`note-${index}`}
+                  key={`note-list-${index}`}
                   onClick={() => {
                     setCurrentNoteID(index);
+                  }}
+                  onAuxClick={(e) => {
+                    if (e.button === 1) {
+                      setCurrentNoteID(index);
+                      setShowDeleteModal(true);
+                    }
                   }}
                   className={cn('list-item', {
                     active: index === currentNoteID,
                   })}
                 >
-                  {item.title}
+                  {note.title}
                 </li>
-              ) : (
-                // FIXME:
-                <Pill as="li" value={item.title} color={'pink'} />
-              )
-            )}
-          </ul>
-          <h3
-            className="alt-list-header"
+              ))}
+            </SideBar.List>,
+            <SideBar.List className="tag-list">
+              {tags.map((tag, index) => (
+                <TagEl
+                  key={`tag-list-${index}`}
+                  title={tag.title}
+                  color={tag.color}
+                />
+              ))}
+            </SideBar.List>
+          )}
+
+          <SideBar.Header
+            value={activeListName === 'notes' ? 'tags' : 'notes'}
+            className="alt"
             onClick={() => {
               setActiveList((state) => (state === 'notes' ? 'tags' : 'notes'));
             }}
-          >
-            {activeListName === 'notes' ? 'tags' : 'notes'}
-          </h3>
-        </div>
+          />
+        </SideBar>
 
-        <div className="note">
-          {showFontFamilies && (
-            <div className="note-fonts">
-              <button
-                className={cn('note-font', { active: fontFamily === 'serif' })}
-                onClick={() => {
-                  setFontFamily('serif');
+        {renderIf(
+          currentNoteID >= 0,
+          <NoteEl>
+            {renderIf(
+              showFontFamilies,
+              <ButtonSelect
+                value={fontFamilies[0]}
+                onClick={(option) => {
+                  setFontFamily(option);
                 }}
-              >
-                serif
-              </button>
-              <button
-                className={cn('note-font', {
-                  active: fontFamily === 'sans-serif',
-                })}
-                onClick={() => {
-                  setFontFamily('sans-serif');
-                }}
-              >
-                sans-serif
-              </button>
-              <button
-                className={cn('note-font', {
-                  active: fontFamily === 'monospace',
-                })}
-                onClick={() => {
-                  setFontFamily('monospace');
-                }}
-              >
-                monospace
-              </button>
-              <button
-                className={cn('note-font', {
-                  active: fontFamily === 'cursive',
-                })}
-                onClick={() => {
-                  setFontFamily('cursive');
-                }}
-              >
-                cursive
-              </button>
-            </div>
-          )}
-          <div className="note-meta">
-            <ul className="note-tags">
-              <li>
-                {currentNoteID >= 0 && (
+                options={fontFamilies}
+                className="note-fonts"
+              />
+            )}
+            <NoteEl.Meta>
+              <NoteEl.Meta.Tags>
+                <li>
                   <Toggle
                     active={tagsEditing}
                     onClick={() => {
@@ -266,87 +285,71 @@ export default function App() {
                     label="🖉"
                     labelAlt="✓"
                   />
+                </li>
+
+                {getCurrentNote()?.tags.map((tag, index) =>
+                  tagsEditing ? (
+                    <InlineForm
+                      key={`tag-editing-${index}`}
+                      name={`tag-${tag.title}`}
+                      value={tag.title}
+                      onChange={() => {}}
+                      className="tag editing"
+                      style={{ '--color': tag.color } as React.CSSProperties}
+                    />
+                  ) : (
+                    <TagEl
+                      key={`tag-${index}`}
+                      title={tag.title}
+                      color={tag.color}
+                    />
+                  )
                 )}
-              </li>
-              {getCurrentNote()?.tags.map(({ title, color }, index) =>
-                tagsEditing ? (
-                  <InlineForm
-                    name={`tag-${title}`}
-                    value={title}
-                    onChange={() => {}}
-                    className="editing"
-                    style={{
-                      padding: '.15em 0',
-                      borderRadius: '.5em',
-                      border: '2px solid white',
-                      // outline: '2px solid white',
-                      backgroundColor: color,
-                      fontStyle: 'italic',
-                      color: 'white'
-                    }}
-                  />
-                ) : (
-                  <Pill
-                    key={`tag-${index}`}
-                    as="li"
-                    value={title}
-                    color={color}
-                    className="tag"
-                  />
-                )
-              )}
 
-              {tagsEditing && (
-                <li>
-                  <Toggle
-                    active={tagsAppending}
-                    onClick={() => {
-                      setTagsAppending((state) => !state);
-                    }}
-                    label="+"
-                    labelAlt="-"
-                  />
-                </li>
-              )}
+                {renderIf(
+                  tagsEditing,
+                  <li>
+                    <Toggle
+                      active={tagsAppending}
+                      onClick={() => {
+                        setTagsAppending((state) => !state);
+                      }}
+                      label="+"
+                      labelAlt="-"
+                    />
+                  </li>
+                )}
 
-              {tagsEditing && tagsAppending && (
-                <li>
-                  <InlineForm
-                    name="new-tag"
-                    value="New tag"
-                    onChange={() => {}}
-                  />
-                </li>
-              )}
-            </ul>
-            <div className="note-dates">
-              <span
-                className={cn('note-date', {
-                  hidden: !getCurrentNote(),
-                })}
-              >
-                created at {formatDate(getCurrentNote()?.createdAt)}
-              </span>
-              <span
-                className={cn('note-date', {
-                  hidden: !getCurrentNote(),
-                })}
-              >
-                modified at {formatDate(getCurrentNote()?.modifiedAt)}
-              </span>
-            </div>
-          </div>
-          <div className="note-content-wrapper">
-            <textarea
+                {renderIf(
+                  tagsEditing && tagsAppending,
+                  <li>
+                    <InlineForm
+                      name="new-tag"
+                      value="New tag"
+                      onChange={() => {}}
+                    />
+                  </li>
+                )}
+              </NoteEl.Meta.Tags>
+
+              <NoteEl.Meta.Dates
+                createdAt={getCurrentNote()?.createdAt}
+                modifiedAt={getCurrentNote()?.modifiedAt}
+              />
+            </NoteEl.Meta>
+
+            <NoteEl.Content
               name="text"
               id="note-content"
-              spellCheck="false"
               value={getCurrentNote()?.text ?? ''}
               style={{ fontFamily }}
-              readOnly={currentNoteID < 0}
               onChange={(e) => {
                 if (currentNoteID < 0) return;
-                updateCurrentNote((n) => ({ ...n, text: e.target.value }));
+                updateCurrentNote((n) => ({
+                  ...n,
+                  text: e.target.value,
+                  modifiedAt: new Date(),
+                }));
               }}
               onContextMenu={(e) => {
                 if (currentNoteID < 0) return;
@@ -354,11 +357,33 @@ export default function App() {
                 setShowFontFamilies((state) => !state);
               }}
             />
-          </div>
-        </div>
+          </NoteEl>
+        )}
       </main>
 
-      <Modal show={showModal} setShow={setShowModal}></Modal>
+      <Modal show={showDeleteModal}>
+        <h3>Delete "{getCurrentNote()?.title || 'undefined'}"?</h3>
+        <p>This action is irreversible!</p>
+        <Modal.Controls>
+          <button
+            onClick={() => {
+              setCurrentNoteID(-1);
+              deleteNote(currentNoteID);
+              setShowDeleteModal(false);
+            }}
+            className="red"
+          >
+            Delete
+          </button>
+          <button
+            onClick={() => {
+              setShowDeleteModal(false);
+            }}
+          >
+            Cancel
+          </button>
+        </Modal.Controls>
+      </Modal>
     </div>
   );
 }

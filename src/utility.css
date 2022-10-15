@@ -1,0 +1,12 @@
+.hidden {
+  visibility: hidden;
+}
+
+button.red {
+  background-color: red;
+  border-top-color: #ffa0a0;
+  border-left-color: #fe7777;
+  border-bottom-color: #fe7777;
+  border-right-color: #ffa0a0;
+  color: white;
+}

@@ -1,5 +1,6 @@
-import { Classable, Clickable } from '../types';
-import { cn } from '../utils';
+import { cn } from '../../utils';
+import { Classable, Clickable } from '../../types';
+import './EditButton.css';
 
 interface EditButtonProps extends Clickable<HTMLButtonElement>, Classable {}
 
