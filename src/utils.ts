@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { JsxElement } from "typescript";
+import { makeFailed, makeSuccessful, Optional } from "./Optional";
 
 export const cn = classNames
 
@@ -59,4 +59,16 @@ export function renderIf(condition: boolean, element: JSX.Element): JSX.Element 
 export function renderIf(condition: boolean, elementIfTrue: JSX.Element, elementIfFalse: JSX.Element): JSX.Element
 export function renderIf(condition: boolean, elementIfTrue: JSX.Element, elementIfFalse?: JSX.Element): JSX.Element | undefined {
   return condition ? elementIfTrue : elementIfFalse
+}
+
+export function isString(value: any): value is string {
+  return typeof value === 'string'
+}
+
+export function safeJSONParse<T>(guard: (value: any) => value is T): (text: string) => Optional<T> {
+  return (text: string) => {
+    const parsed = JSON.parse(text)
+    if (!guard(parsed)) return makeFailed("bad format")
+    return makeSuccessful(parsed)
+  }
 }

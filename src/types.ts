@@ -1,6 +1,8 @@
-import { Argument } from 'classnames';
+import { Argument as ClassArgument } from 'classnames';
 
-export type ClassArgument = Argument
+export type Maybe<T> = T | null
+
+export type { ClassArgument }
 
 export interface Substitutable {
   as?: keyof HTMLElementTagNameMap;
@@ -8,6 +10,10 @@ export interface Substitutable {
 
 export interface Nestable {
   children?: React.ReactNode;
+}
+
+export interface StrictNestable {
+  children: React.ReactElement;
 }
 
 export interface Nameable {
@@ -34,8 +40,20 @@ export interface Styleable {
   style?: React.CSSProperties;
 }
 
+export interface Placeholderable {
+  placeholder?: string
+}
+
+export interface Validatable {
+  valid?: boolean;
+  invalid?: boolean;
+  validMessage?: string;
+  invalidMessage?: string;
+}
+
 export interface Clickable<T extends HTMLElement> {
   onClick?: React.MouseEventHandler<T>;
+  onAuxClick?: React.MouseEventHandler<HTMLLIElement>
   onDoubleClick?: React.MouseEventHandler<T>;
   onContextMenu?: React.MouseEventHandler<HTMLTextAreaElement>;
 }
@@ -57,3 +75,10 @@ export interface HasCoords {
   y: number;
 }
 
+export interface Touchable {
+  touched?: boolean;
+}
+
+export interface Hidable {
+  hidden?: boolean;
+}

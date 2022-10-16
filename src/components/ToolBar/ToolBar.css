@@ -13,18 +13,14 @@
 }
 
 .user-info {
+  font-size: .9rem;
   margin-inline: .3em;
   color: white;
 }
 
 .user-name {
-  text-decoration: underline;
-  text-decoration-style: dotted;
-  color: #80acf7;
-}
-
-.user-name:hover {
-  cursor: pointer;
-  text-decoration-style: solid;
-  color: #4c89f4;
+  /* padding: .1em .2em; */
+  /* border-radius: .3em; */
+  /* background-color: white; */
+  /* font-family: sans-serif; */
 }

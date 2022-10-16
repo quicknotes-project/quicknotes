@@ -1,4 +1,5 @@
-import { Clickable, HasValue, Nestable } from '../../types';
+import { Classable, Clickable, HasValue, Nestable } from '../../types';
+import { cn } from '../../utils';
 import './ToolBar.css';
 
 export default function ToolBar({ children }: Nestable) {
@@ -15,11 +16,14 @@ function UserInfo({ children }: Nestable) {
   return <div className="user-info">{children}</div>;
 }
 
-interface UserNameProps extends Clickable<HTMLSpanElement>, HasValue<string> {}
+interface UserNameProps
+  extends Classable,
+    Clickable<HTMLSpanElement>,
+    HasValue<string> {}
 
-function UserName({ value, onClick }: UserNameProps) {
+function UserName({ value, onClick, className }: UserNameProps) {
   return (
-    <span className="user-name" onClick={onClick}>
+    <span className={cn('user-name', className)} onClick={onClick}>
       {value}
     </span>
   );

@@ -1,5 +1,106 @@
-.hidden {
+:root {
+  --bg-color: #ddd;
+  --accent-bg-color: #666;
+  --wallpaper: #999;
+  --bdr-color: #333;
+
+  --color: black;
+  --accent-color: white;
+  --link-color: #0d6efd;
+  --link-hover-color: #0a58ca;
+  --accent-link-color: #84bef8;
+  --accent-link-hover-color: white;
+
+  /* --bar-height: 4em;  ?? */
+
+  --border-wide: 3px;
+  --border-thin: 1px;
+
+  --border-light-color: #e3e3e3;
+  --border-dark-color: #969696;
+
+  --box-shadow: .4em .4em rgba(55, 55, 55, 0.7);
+
+  font-size: 1.4rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+h3 {
+  margin: 0;
+  text-align: center;
+}
+
+button {
+  cursor: pointer;
+  padding-inline: .3em;
+  border-top-color: var(--border-light-color);
+  border-left-color: var(--border-light-color);
+  border-bottom-color: var(--border-light-color);
+  border-right-color: var(--border-light-color);
+  background-color: var(--bg-color);
+  font-size: 1rem;
+  font-family: serif;
+  color: var(--color)
+}
+
+button:disabled {
+  cursor: default;
+  color: var(--accent-bg-color) !important;
+}
+
+input {
+  font-size: 1rem;
+}
+
+.invisible {
   visibility: hidden;
+}
+
+.hidden {
+  display: none;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.a-i-center {
+  align-items: center;
+}
+
+.j-c-center {
+  justify-content: center;
+}
+
+.link {
+  text-decoration: underline;
+  color: var(--link-color);
+}
+
+.link:hover {
+  cursor: pointer;
+  color: var(--link-hover-color);
+}
+
+.link.plain {
+  color: inherit;
+}
+
+.link.accent {
+  color: var(--accent-link-color);
+}
+
+.link.accent:hover {
+  color: var(--accent-link-hover-color);
+}
+
+input.editing:focus {
+  outline: initial;
 }
 
 button.red {
@@ -9,4 +110,19 @@ button.red {
   border-bottom-color: #fe7777;
   border-right-color: #ffa0a0;
   color: white;
+}
+
+button.edit {
+  margin: 0;
+  padding: 0;
+  width: 1.6em;
+  aspect-ratio: 1/1;
+  border-radius: .3em;
+  line-height: 1.4em;
+}
+
+button.edit.active {
+  border-style: inset;
+  background-color: var(--accent-bg-color);
+  color: var(--accent-color);
 }

@@ -16,18 +16,24 @@ export default function ButtonSelect({
   return (
     <div className={cn('button-select', className)}>
       {options?.map((option, index) => (
-        <button
-          key={`button-select-option-${index}`}
-          onClick={() => onClick(option)}
-          className={cn(
-            'button-select-option',
-            { active: option === value },
-            className
-          )}
-        >
-          {option}
-        </button>
+        <div key={`button-select-option-${index}`}>
+          <input
+            id={`button-select-option-${index}`}
+            name={`button-select-option-${index}`}
+            type="checkbox"
+            checked={value === option}
+            onChange={() => onClick(option)}
+            className={cn('button-select-option-input', className)}
+          />
+          <label
+            htmlFor={`button-select-option-${index}`}
+            className="button-select-option"
+          >
+            {option}
+          </label>
+        </div>
       ))}
+      <form></form>
     </div>
   );
 }

@@ -8,3 +8,135 @@
 .note>* {
   flex-basis: 1;
 }
+
+.note-header {
+  position: relative;
+  padding: .3em;
+  padding-left: .5em;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: var(--border-thin) solid #333;
+}
+
+.note-title-wrapper {
+  /* grid-column-start: 2; */
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: .5em;
+}
+
+.note-controls {
+  /* padding-inline: .3em; */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: .3em;
+}
+
+.note-control {
+  height: 2.3em;
+}
+
+.note-meta {
+  height: 4em;
+  padding: 0 .5em;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  column-gap: .5em;
+  font-size: .8rem;
+}
+
+.note-tags-wrapper {
+  /* margin: 0;
+  padding: 0; */
+  height: 100%;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.note-tags {
+  margin: 0;
+  padding: 0;
+  padding-right: .15em;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: -20px;
+  right: -20px;
+  display: flex;
+  align-items: center;
+  gap: .5em;
+  list-style-type: none;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.note-dates::before {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: -.8em;
+  width: .3em;
+  height: 2em;
+  background: linear-gradient(to right, transparent, var(--bg-color));
+}
+
+.note-dates {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.note-date {
+  font-style: italic;
+  font-size: .9rem;
+  color: #555;
+}
+
+.note-content-wrapper {
+  position: relative;
+  height: 100%;
+  display: grid;
+}
+
+.note-content-wrapper>textarea {
+  margin: 0;
+  padding: .7em;
+  resize: none;
+  border: none;
+  font-size: 1rem;
+  /* overflow: hidden; */
+}
+
+.note-content-wrapper>textarea:focus {
+  outline: none;
+}
+
+.note-content-wrapper::after,
+.note-content-wrapper>textarea {
+  grid-area: 1 / 1 / 2 / 2;
+}
+
+.note-placeholder {
+  grid-column: 2;
+  grid-row-start: 1;
+  grid-row-end: 3;
+  display: grid;
+  place-content: center;
+  background-color: #afafaf;
+}
+
+.placeholder-message {
+  padding: .5em;
+  user-select: none;
+  font: italic 1.5rem Arial, sans-serif;
+  opacity: .2;
+}

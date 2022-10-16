@@ -11,6 +11,7 @@ import InlineForm from './components/InlineForm';
 import ButtonSelect from './components/ButtonSelect';
 import { cn, generateRandomColor, renderIf } from './utils';
 import './App.css';
+import { useAuth } from './contexts/AuthContext';
 
 const fontFamilies = ['serif', 'sans-serif', 'monospace', 'cursive'] as const;
 
@@ -51,30 +52,30 @@ function NewNote(
   };
 }
 
-const tags = {
+const mockTags = {
   cool: NewTag('cool', '#AFBC9A'),
   awesome: NewTag('awesome', '#8CACB6'),
   wow: NewTag('wow', generateRandomColor()),
   nice: NewTag('nice', generateRandomColor()),
   smth: NewTag('smth', generateRandomColor()),
-};
+} as const;
 
 const mockNotes: Note[] = [
   NewNote(
     'school',
-    'hahaha i love school',
-    [tags.cool, tags.awesome],
+    'hahaha i love school '.repeat(48),
+    [mockTags.cool, mockTags.awesome],
     new Date(Date.parse('2022-10-01')),
     new Date(Date.parse('2022-10-01'))
   ),
   NewNote(
     'foo',
     'bar',
-    [tags.cool, tags.awesome, tags.awesome, tags.awesome],
+    [mockTags.cool, mockTags.awesome, mockTags.awesome, mockTags.awesome],
     new Date(Date.parse('2022-09-30')),
     new Date(Date.parse('2022-09-30'))
   ),
-  NewNote('something', 'something', [tags.nice, tags.wow]),
+  NewNote('something', 'something', [mockTags.nice, mockTags.wow]),
   NewNote('something', 'something'),
   NewNote('something', 'something'),
   NewNote('something', 'something'),
@@ -84,6 +85,8 @@ const mockNotes: Note[] = [
 ];
 
 export default function App() {
+  const { signout } = useAuth();
+
   const [userName, setUserName] = useState('Ivan');
 
   const [activeListName, setActiveList] = useState<ListNames>('notes');
@@ -93,6 +96,8 @@ export default function App() {
   const [notes, setNotes] = useState<Note[]>(mockNotes);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const [showUserModal, setShowUserModal] = useState(false);
 
   const [showFontFamilies, setShowFontFamilies] = useState(false);
 
@@ -153,11 +158,18 @@ export default function App() {
           </button>
         </ToolBar.Controls>
         <ToolBar.UserInfo>
-          Hello, <ToolBar.UserInfo.UserName value={userName} />
+          Signed in as{' '}
+          <ToolBar.UserInfo.UserName
+            value={userName}
+            className="link accent"
+            onClick={() => {
+              setShowUserModal(true);
+            }}
+          />
         </ToolBar.UserInfo>
       </ToolBar>
 
-      <main>
+      <main className="app">
         <SideBar.Header value={activeListName} />
 
         {renderIf(
@@ -200,7 +212,9 @@ export default function App() {
               </button>
             </NoteEl.Header.Controls>
           </NoteEl.Header>,
-          <NoteEl.Header />
+          <div className="note-placeholder">
+            <div className="placeholder-message">Quicknotes</div>
+          </div>
         )}
 
         <SideBar>
@@ -221,7 +235,8 @@ export default function App() {
             activeListName === 'notes',
             <SideBar.List className="note-list">
               {notes.map((note, index) => (
-                <li
+                <SideBar.List.Item
+                  value={note.title}
                   key={`note-list-${index}`}
                   onClick={() => {
                     setCurrentNoteID(index);
@@ -232,12 +247,10 @@ export default function App() {
                       setShowDeleteModal(true);
                     }
                   }}
-                  className={cn('list-item', {
+                  className={cn({
                     active: index === currentNoteID,
                   })}
-                >
-                  {note.title}
-                </li>
+                />
               ))}
             </SideBar.List>,
             <SideBar.List className="tag-list">
@@ -266,10 +279,8 @@ export default function App() {
             {renderIf(
               showFontFamilies,
               <ButtonSelect
-                value={fontFamilies[0]}
-                onClick={(option) => {
-                  setFontFamily(option);
-                }}
+                value={fontFamily}
+                onClick={(option) => setFontFamily(option)}
                 options={fontFamilies}
                 className="note-fonts"
               />
@@ -362,9 +373,13 @@ export default function App() {
       </main>
 
       <Modal show={showDeleteModal}>
-        <h3>Delete "{getCurrentNote()?.title || 'undefined'}"?</h3>
-        <p>This action is irreversible!</p>
-        <Modal.Controls>
+        <Modal.Header>
+          <h3>Delete "{getCurrentNote()?.title || 'undefined'}"?</h3>
+        </Modal.Header>
+        <Modal.Body>
+          <p>This action is irreversible!</p>
+        </Modal.Body>
+        <Modal.Footer>
           <button
             onClick={() => {
               setCurrentNoteID(-1);
@@ -382,7 +397,33 @@ export default function App() {
           >
             Cancel
           </button>
-        </Modal.Controls>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showUserModal}>
+        <Modal.Header>
+          <h3>{userName}</h3>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="d-flex j-c-center">
+            <button
+              onClick={() => {
+                signout();
+              }}
+            >
+              Logout
+            </button>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+            onClick={() => {
+              setShowUserModal(false);
+            }}
+          >
+            Close
+          </button>
+        </Modal.Footer>
       </Modal>
     </div>
   );

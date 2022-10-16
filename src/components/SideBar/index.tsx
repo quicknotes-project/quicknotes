@@ -1,6 +1,7 @@
 import { cn } from '../../utils';
 import { Classable, Clickable, HasValue, Nestable } from '../../types';
 import './SideBar.css';
+import classNames from 'classnames';
 
 interface SideBarProps extends Nestable {}
 
@@ -28,5 +29,20 @@ interface ListProps extends Nestable, Classable {}
 function List({ className, children }: ListProps) {
   return <ul className={cn('list', className)}>{children}</ul>;
 }
+
+interface ItemProps
+  extends Clickable<HTMLLIElement>,
+    HasValue<string>,
+    Classable {}
+
+function Item({ value, onClick, onAuxClick, className }: ItemProps) {
+  return (
+    <li onClick={onClick} onAuxClick={onAuxClick} className={cn('list-item', className)}>
+      {value}
+    </li>
+  );
+}
+
+List.Item = Item
 
 SideBar.List = List;

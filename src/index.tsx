@@ -1,16 +1,35 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import App from './App';
+import { AuthProvider } from './contexts/AuthContext';
 import './index.css';
-import './utility.css'
+import './utility.css';
+import RequireAuth from './components/RequireAuth';
+import AuthPage from './pages/AuthPage';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/notes" element={<Navigate to="/" />} />
+          <Route
+            path="/"
+            element={
+              <RequireAuth>
+                <App />
+              </RequireAuth>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   </React.StrictMode>
 );
 

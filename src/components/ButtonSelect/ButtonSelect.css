@@ -5,9 +5,24 @@
   gap: .3em
 }
 
-.button-select-option.active {
+.button-select-option-input {
+  display: none;
+}
+
+.button-select-option {
+  padding-inline: .3em;
+}
+
+:not(:checked)~.button-select-option:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+:checked~.button-select-option {
   /* border-color: #333; */
-  border-style: inset;
-  background-color: var(--accent-bg-color);
-  color: var(--accent-color);
+  /* border-style: inset; */
+  /* background-color: var(--accent-bg-color); */
+  /* color: var(--accent-color); */
+  /* text-decoration: underline; */
+  font-weight: bold;
 }

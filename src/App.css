@@ -1,34 +1,32 @@
-
-
 .container {
-  width: clamp(300px, 80%, 800px);
+  width: clamp(300px, 80%, 1000px);
   height: clamp(400px, 60%, 800px);
   margin-top: 7em;
   display: flex;
   flex-direction: column;
   background-color: #ddd;
-  box-shadow: .4em .4em #555;
+  box-shadow: var(--box-shadow);
   /* border: var(--border-thin) solid #333; */
   overflow: hidden;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 550px) {
   .container {
     width: 100vw;
     height: 100vh;
     margin: 0;
   }
 
-  main {
+  .app {
     display: flex !important;
     flex-direction: column;
   }
 
-  .list-header-wrapper {
+  .side-bar-header-wrapper {
     border-right: none !important;
   }
 
-  .list-container {
+  .side-bar {
     height: 30vh;
     border-right: none !important;
   }
@@ -38,29 +36,16 @@
   }
 }
 
-main {
+.app {
   min-height: 0;
   height: 100%;
   display: grid;
-  grid-template-columns: 25% auto;
+  grid-template-columns: 33% auto;
   grid-template-rows: minmax(3em, auto) 1fr;
 }
 
-main>:nth-child(odd) {
+.app>:nth-child(odd) {
   border-right: var(--border-wide) solid #333;
-}
-
-h3 {
-  margin: 0;
-  text-align: center;
-}
-
-.list {
-  margin: 0;
-  margin-bottom: auto;
-  padding: 0;
-  list-style: none;
-  overflow-y: scroll;
 }
 
 .tag-list {
@@ -71,169 +56,6 @@ h3 {
   gap: .3em;
 }
 
-.list-item {
-  cursor: pointer;
-  padding: 1em;
-  padding-right: .5em;
-  margin-bottom: calc(-1 * var(--border-thin));
-  border-bottom: var(--border-thin) dotted #333;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.list-item:hover {
-  background-color: white;
-}
-
-.list-item.active {
-  background-color: var(--accent-bg-color);
-  color: var(--accent-color);
-}
-
-.note-header {
-  position: relative;
-  padding: .3em;
-  padding-left: .5em;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: var(--border-thin) solid #333;
-}
-
-.note-title-wrapper {
-  /* grid-column-start: 2; */
-  display: flex;
-  align-items: center;
-  gap: .5em;
-}
-
-.note-controls {
-  /* padding-inline: .3em; */
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: .3em;
-}
-
-.note-control {
-  height: 2.3em;
-}
-
-
-.note-meta {
-  height: 4em;
-  padding: 0 .5em;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  column-gap: .5em;
-  /* justify-content: space-between; */
-}
-
-.note-tags-wrapper {
-  /* margin: 0;
-  padding: 0; */
-  height: 100%;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-}
-
-.note-tags {
-  margin: 0;
-  padding: 0;
-  padding-right: .15em;
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: -20px;
-  right: -20px;
-  display: flex;
-  align-items: center;
-  gap: .5em;
-  list-style-type: none;
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-
-input.editing:focus {
-  outline: initial;
-}
-
-button.edit {
-  margin: 0;
-  padding: 0;
-  width: 1.6em;
-  aspect-ratio: 1/1;
-  border-radius: .3em;
-  line-height: 1.4em;
-}
-
-button.edit.active {
-  border-style: inset;
-  background-color: var(--accent-bg-color);
-  color: var(--accent-color);
-}
-
-.tag.editing {
-  padding: '.15em 0';
-  border-radius: '.5em';
-  border: 3px solid var(--color);
-  font-style: 'italic';
-}
-
-.note-dates::before {
-  content: ' ';
-  position: absolute;
-  top: 0;
-  left: -.8em;
-  width: .3em;
-  height: 2em;
-  background: linear-gradient(to right, transparent, var(--bg-color));
-}
-
-.note-dates {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.note-date {
-  font-style: italic;
-  font-size: .9rem;
-  color: #555;
-}
-
-.note-content-wrapper {
-  position: relative;
-  height: 100%;
-  display: grid;
-}
-
-.note-content-wrapper>textarea {
-  margin: 0;
-  padding: .7em;
-  resize: none;
-  border: none;
-  font-size: 1rem;
-  /* overflow: hidden; */
-}
-
-.note-content-wrapper>textarea:focus {
-  outline: none;
-}
-
-.note-content-wrapper::after,
-.note-content-wrapper>textarea {
-  grid-area: 1 / 1 / 2 / 2;
-}
-
-
-
 #search-query {
   width: 100%;
   border: var(--border-thin) solid black;
@@ -241,9 +63,6 @@ button.edit.active {
 }
 
 #search-placeholder {
-  font-size: .8em;
-  font-style: italic;
-  font-family: sans-serif;
+  font: italic .8rem sans-serif;
   color: var(--accent-bg-color)
 }
-

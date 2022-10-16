@@ -26,3 +26,30 @@
   flex-direction: column;
   /* overflow: scroll; */
 }
+
+.list {
+  margin: 0;
+  margin-bottom: auto;
+  padding: 0;
+  list-style: none;
+  overflow-y: scroll;
+}
+
+.list-item {
+  cursor: pointer;
+  padding: 1em;
+  padding-right: .5em;
+  margin-bottom: calc(-1 * var(--border-thin));
+  border-bottom: var(--border-thin) dotted #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.list-item:hover {
+  background-color: white;
+}
+
+.list-item.active {
+  background-color: var(--accent-bg-color);
+  color: var(--accent-color);
+}
