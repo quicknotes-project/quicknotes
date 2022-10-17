@@ -10,7 +10,7 @@ import {
   Readonlyable,
   Styleable,
 } from '../../types';
-import './Note.css'
+import './Note.css';
 
 export default function Note({ children }: Nestable) {
   return <div className="note">{children}</div>;
@@ -106,4 +106,37 @@ function Content({
     </div>
   );
 }
+
+function Text({
+  name,
+  id,
+  value,
+  style,
+  className,
+  readonly,
+  onChange,
+  onContextMenu,
+}: ContentProps) {
+  <div className="note-text-wrapper">
+    <textarea
+      id={id}
+      name={name}
+      value={value}
+      spellCheck="false"
+      style={style}
+      className={cn('note-text', className)}
+      readOnly={readonly}
+      onChange={onChange}
+      onContextMenu={onContextMenu}
+    />
+  </div>;
+}
+
+function Whiteboard() {
+  return <div className="note-whiteboard"></div>;
+}
+
+Content.Text = Text;
+Content.Whiteboard = Whiteboard;
+
 Note.Content = Content;

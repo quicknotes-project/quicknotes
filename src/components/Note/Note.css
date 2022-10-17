@@ -102,12 +102,13 @@
 }
 
 .note-content-wrapper {
-  position: relative;
+  min-width: 0;
   height: 100%;
   display: grid;
 }
 
 .note-content-wrapper>textarea {
+  min-width: 0;
   margin: 0;
   padding: .7em;
   resize: none;
@@ -120,10 +121,10 @@
   outline: none;
 }
 
-.note-content-wrapper::after,
+/* .note-content-wrapper::after,
 .note-content-wrapper>textarea {
   grid-area: 1 / 1 / 2 / 2;
-}
+} */
 
 .note-placeholder {
   grid-column: 2;

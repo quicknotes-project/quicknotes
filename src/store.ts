@@ -1,4 +1,5 @@
-const storageKeys = ["username", "fullname", "session_id"] as const
+// const storageKeys = ["username", "fullname", "session_id"] as const
+const storageKeys = ["username", "fullname"] as const
 
 type storageKey = typeof storageKeys[number]
 
@@ -8,11 +9,11 @@ const storage = {
   },
 
   set(key: storageKey, value: string): void {
-    sessionStorage.setItem(key, value)
+    return sessionStorage.setItem(key, value)
   },
 
   remove(key: storageKey): void {
-    sessionStorage.removeItem(key)
+    return sessionStorage.removeItem(key)
   }
 }
 

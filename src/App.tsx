@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from './contexts/AuthContext';
 import TagEl from './components/Tag';
 import Modal from './components/Modal';
 import NoteEl from './components/Note';
@@ -9,9 +10,9 @@ import SideBar from './components/SideBar';
 import SearchBar from './components/SearchBar';
 import InlineForm from './components/InlineForm';
 import ButtonSelect from './components/ButtonSelect';
-import { cn, generateRandomColor, renderIf } from './utils';
+import { cn, generateRandomColor, renderIf, safeJSONParse } from './utils';
+import { isSuccessful } from './Optional';
 import './App.css';
-import { useAuth } from './contexts/AuthContext';
 
 const fontFamilies = ['serif', 'sans-serif', 'monospace', 'cursive'] as const;
 
@@ -34,6 +35,20 @@ interface Note {
   tags: Tag[];
   createdAt: Date;
   modifiedAt: Date;
+}
+
+function isNote(value: any): value is Note {
+  return (
+    'title' in value &&
+    'text' in value &&
+    'tags' in value &&
+    'createdAt' in value &&
+    'modifiedAt' in value
+  );
+}
+
+function isNoteArray(value: any): value is Note[] {
+  return Array.isArray(value) && value.every(isNote);
 }
 
 function NewNote(
@@ -85,9 +100,9 @@ const mockNotes: Note[] = [
 ];
 
 export default function App() {
-  const { signout } = useAuth();
+  const { signout, fullname } = useAuth();
 
-  const [userName, setUserName] = useState('Ivan');
+  // const [username, setUserName] = useState('Ivan');
 
   const [activeListName, setActiveList] = useState<ListNames>('notes');
 
@@ -109,7 +124,7 @@ export default function App() {
 
   const [fontFamily, setFontFamily] = useState('serif');
 
-  const [searchTags, setSearchTags] = useState<Tag[]>();
+  // const [searchTags, setSearchTags] = useState<Tag[]>();
 
   const tags = notes
     .map((note) => note.tags)
@@ -144,6 +159,25 @@ export default function App() {
     setNotes((state) => state.filter((_, i) => i !== index));
   };
 
+  const fetchData = async () => {
+    const res = await fetch('/notes');
+    if (res.status !== 200) {
+      return;
+    }
+
+    const raw = await res.json();
+    const notesOption = safeJSONParse(isNoteArray)(raw);
+    if (!isSuccessful(notesOption)) {
+      return;
+    }
+
+    setNotes(notesOption.value);
+  };
+
+  useEffect(() => {
+    fetchData();
+  });
+
   return (
     <div className="container">
       <ToolBar>
@@ -160,7 +194,7 @@ export default function App() {
         <ToolBar.UserInfo>
           Signed in as{' '}
           <ToolBar.UserInfo.UserName
-            value={userName}
+            value={fullname ?? '-'}
             className="link accent"
             onClick={() => {
               setShowUserModal(true);
@@ -348,26 +382,25 @@ export default function App() {
                 modifiedAt={getCurrentNote()?.modifiedAt}
               />
             </NoteEl.Meta>
-
-            <NoteEl.Content
-              name="text"
-              id="note-content"
-              value={getCurrentNote()?.text ?? ''}
-              style={{ fontFamily }}
-              onChange={(e) => {
-                if (currentNoteID < 0) return;
-                updateCurrentNote((n) => ({
-                  ...n,
-                  text: e.target.value,
-                  modifiedAt: new Date(),
-                }));
-              }}
-              onContextMenu={(e) => {
-                if (currentNoteID < 0) return;
-                e.preventDefault();
-                setShowFontFamilies((state) => !state);
-              }}
-            />
+              <NoteEl.Content
+                name="text"
+                id="note-content"
+                value={getCurrentNote()?.text ?? ''}
+                style={{ fontFamily }}
+                onChange={(e) => {
+                  if (currentNoteID < 0) return;
+                  updateCurrentNote((n) => ({
+                    ...n,
+                    text: e.target.value,
+                    modifiedAt: new Date(),
+                  }));
+                }}
+                onContextMenu={(e) => {
+                  if (currentNoteID < 0) return;
+                  e.preventDefault();
+                  setShowFontFamilies((state) => !state);
+                }}
+              />
           </NoteEl>
         )}
       </main>
@@ -402,7 +435,7 @@ export default function App() {
 
       <Modal show={showUserModal}>
         <Modal.Header>
-          <h3>{userName}</h3>
+          <h3>{fullname}</h3>
         </Modal.Header>
         <Modal.Body>
           <div className="d-flex j-c-center">

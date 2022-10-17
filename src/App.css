@@ -10,7 +10,7 @@
   overflow: hidden;
 }
 
-@media (max-width: 550px) {
+/* @media (max-width: 550px) {
   .container {
     width: 100vw;
     height: 100vh;
@@ -34,7 +34,7 @@
   .note {
     flex: 1;
   }
-}
+} */
 
 .app {
   min-height: 0;

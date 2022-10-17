@@ -8,7 +8,7 @@ import { isSuccessful } from '../Optional';
 interface AuthAPI {
   username: Maybe<string>;
   fullname: Maybe<string>;
-  sessionID: Maybe<string>;
+  // sessionID: Maybe<string>;
   tryLogin: (username: string, password: string) => Promise<boolean>;
   tryRegister: (username: string, fullname: string, password: string) => Promise<boolean>;
   signout: () => void;
@@ -41,24 +41,24 @@ export function AuthProvider({ children }: Nestable) {
     setFullname(null);
   };
 
-  const [sessionID, setSessionID] = useState(store.get('session_id'));
+  // const [sessionID, setSessionID] = useState(store.get('session_id'));
 
-  const saveSessionID = (value: string) => {
-    store.set('session_id', JSON.stringify(value));
-    setSessionID(value);
-  };
+  // const saveSessionID = (value: string) => {
+  //   store.set('session_id', JSON.stringify(value));
+  //   setSessionID(value);
+  // };
 
-  const unsetSessionID = () => {
-    store.remove('session_id');
-    setSessionID(null);
-  };
+  // const unsetSessionID = () => {
+  //   store.remove('session_id');
+  //   setSessionID(null);
+  // };
 
   const tryLogin = async (username: string, password: string) => {
     const res = await AuthService.tryLogin(username, password);
     if (isSuccessful(res)) {
       saveUsername(username);
       saveFullname(res.value.fullname);
-      saveSessionID(res.value.sessionID);
+      // saveSessionID(res.value.sessionID);
     }
     return res.success;
   };
@@ -72,21 +72,21 @@ export function AuthProvider({ children }: Nestable) {
     if (isSuccessful(res)) {
       saveUsername(username);
       saveFullname(res.value.fullname);
-      saveSessionID(res.value.sessionID);
+      // saveSessionID(res.value.sessionID);
     }
     return res.success;
   };
 
   const signout = () => {
     unsetUsername();
-    unsetSessionID();
     unsetFullname();
+    // unsetSessionID();
   };
 
   const values = {
     username,
     fullname,
-    sessionID,
+    // sessionID,
     tryLogin,
     tryRegister,
     signout,
