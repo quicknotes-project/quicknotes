@@ -176,7 +176,7 @@ export default function App() {
 
   useEffect(() => {
     fetchData();
-  });
+  }, []);
 
   return (
     <div className="container">
@@ -309,7 +309,7 @@ export default function App() {
 
         {renderIf(
           currentNoteID >= 0,
-          <NoteEl>
+          <NoteEl key={currentNoteID}>
             {renderIf(
               showFontFamilies,
               <ButtonSelect
@@ -382,11 +382,11 @@ export default function App() {
                 modifiedAt={getCurrentNote()?.modifiedAt}
               />
             </NoteEl.Meta>
-              <NoteEl.Content
+            <NoteEl.Content>
+              <NoteEl.Content.Text
                 name="text"
                 id="note-content"
                 value={getCurrentNote()?.text ?? ''}
-                style={{ fontFamily }}
                 onChange={(e) => {
                   if (currentNoteID < 0) return;
                   updateCurrentNote((n) => ({
@@ -395,12 +395,14 @@ export default function App() {
                     modifiedAt: new Date(),
                   }));
                 }}
+                style={{ fontFamily }}
                 onContextMenu={(e) => {
                   if (currentNoteID < 0) return;
                   e.preventDefault();
                   setShowFontFamilies((state) => !state);
                 }}
               />
+            </NoteEl.Content>
           </NoteEl>
         )}
       </main>

@@ -101,30 +101,41 @@
   color: #555;
 }
 
-.note-content-wrapper {
+.note-content {
   min-width: 0;
   height: 100%;
+  padding: .7em;
+  overflow-y: scroll;
+  background-color: white;
+}
+
+.note-text-wrapper {
+  min-width: 0;
+  /* height: 100%; */
   display: grid;
 }
 
-.note-content-wrapper>textarea {
+.note-text {
   min-width: 0;
+  /* height: 100%; */
   margin: 0;
-  padding: .7em;
+  padding: 0;
   resize: none;
   border: none;
   font-size: 1rem;
-  /* overflow: hidden; */
+  overflow: hidden;
 }
 
-.note-content-wrapper>textarea:focus {
+.note-text:focus {
   outline: none;
 }
 
-/* .note-content-wrapper::after,
-.note-content-wrapper>textarea {
-  grid-area: 1 / 1 / 2 / 2;
-} */
+.note-whiteboard {
+  height: 300px;
+  border: 1px solid black;
+  resize: vertical;
+  overflow: hidden;
+}
 
 .note-placeholder {
   grid-column: 2;
