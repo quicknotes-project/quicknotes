@@ -5,7 +5,7 @@ import './SideBar.css';
 interface SideBarProps extends Nestable {}
 
 export default function SideBar({ children }: SideBarProps) {
-  return <div className="side-bar">{children}</div>;
+  return <aside className="side-bar">{children}</aside>;
 }
 
 interface HeaderProps
@@ -15,7 +15,7 @@ interface HeaderProps
 
 function Header({ value, className, onClick }: HeaderProps) {
   return (
-    <div className={cn('side-bar-header-wrapper', className)} onClick={onClick}>
+    <div className={cn('side-bar-header-wrapper header', className)} onClick={onClick}>
       <h3 className={cn('side-bar-header', className)}>{value}</h3>
     </div>
   );

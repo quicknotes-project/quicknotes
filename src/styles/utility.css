@@ -38,6 +38,10 @@ h3 {
   text-align: center;
 }
 
+.header {
+  height: 3em;
+}
+
 .button {
   cursor: pointer;
   padding-inline: .3em;

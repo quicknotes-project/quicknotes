@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import InlineForm from '../InlineForm';
+import { cn, renderIf } from '../../utils';
 import {
   Changeable,
   Classable,
@@ -10,7 +11,6 @@ import {
   Substitutable,
 } from '../../types';
 import './Editable.css';
-import { cn, renderIf } from '../../utils';
 
 interface EditableProps
   extends Classable,

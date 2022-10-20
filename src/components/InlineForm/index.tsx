@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../utils';
 import {
   Changeable,
@@ -11,7 +12,6 @@ import {
   Submittable,
 } from '../../types';
 import './InlineForm.css';
-import { useEffect, useRef, useState } from 'react';
 
 interface InlineFormProps
   extends HasValue<string>,
@@ -47,13 +47,6 @@ export default function InlineForm({
   }, [value]);
   return (
     <form onSubmit={onSubmit}>
-      <span
-        ref={span}
-        className={cn('input inline-form-input', className)}
-        style={{ position: 'absolute', opacity: 0 }}
-      >
-        {value}
-      </span>
       <input
         type="text"
         name={name}
@@ -70,6 +63,13 @@ export default function InlineForm({
         }}
       />
       <input type="submit" hidden />
+      <span
+        ref={span}
+        className={cn('input inline-form-input', className)}
+        style={{ position: 'absolute', opacity: 0 }}
+      >
+        {value}
+      </span>
     </form>
   );
 }

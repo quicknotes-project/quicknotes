@@ -105,6 +105,8 @@ export default function App() {
 
   const [notes, setNotes] = useState<NoteData[]>(mockNotes);
 
+  const [showSideBar, setShowSideBar] = useState(true);
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
 
@@ -163,6 +165,14 @@ export default function App() {
           <button
             className="button"
             onClick={() => {
+              setShowSideBar((state) => !state);
+            }}
+          >
+            ≡
+          </button>
+          <button
+            className="button"
+            onClick={() => {
               prependNotes(
                 NewNoteData('New note', '', [], new Date(), new Date())
               );
@@ -185,100 +195,102 @@ export default function App() {
       </ToolBar>
 
       <main className="app">
-        <SideBar.Header value={activeListName} />
-
         {renderIf(
-          currentNoteID >= 0,
-          <Note.Header onDoubleClick={() => setCurrentNoteID(-1)}>
-            <Note.Header.Title>
-              <Editable
-                as="h3"
-                className="note-title"
-                value={getCurrentNote()?.title || ''}
-                placeholder="<empty name>"
-                onChange={(e) => {
-                  e.currentTarget.style.width = `${e.currentTarget.value.length}ch`;                  
-                  updateCurrentNote((n) => ({ ...n, title: e.target.value }));
-                }}
-              />
-            </Note.Header.Title>
-            <Note.Header.Controls>
-              <button
-                className="button note-control"
-                disabled={currentNoteID < 0}
-                onClick={() => {
-                  setShowDeleteModal(true);
-                }}
-              >
-                delete
-              </button>
-            </Note.Header.Controls>
-          </Note.Header>,
-          <div className="note-placeholder">
-            <div className="placeholder-message">Quicknotes</div>
-          </div>
-        )}
+          showSideBar,
+          <SideBar>
+            <SideBar.Header value={activeListName} />
 
-        <SideBar>
-          <SearchBar>
+            <SearchBar>
+              {renderIf(
+                activeListName === 'notes',
+                <input
+                  type="text"
+                  name="query"
+                  placeholder="Search..."
+                  id="search-query"
+                />,
+                <span id="search-placeholder">Click on tag to search...</span>
+              )}
+            </SearchBar>
+
             {renderIf(
               activeListName === 'notes',
-              <input
-                type="text"
-                name="query"
-                placeholder="Search..."
-                id="search-query"
-              />,
-              <span id="search-placeholder">Click on tag to search...</span>
-            )}
-          </SearchBar>
-
-          {renderIf(
-            activeListName === 'notes',
-            <SideBar.List className="note-list">
-              {notes.map((note, index) => (
-                <SideBar.List.Item
-                  value={note.title || '<empty name>'}
-                  key={`note-list-${index}`}
-                  onClick={() => {
-                    setCurrentNoteID(index);
-                  }}
-                  onAuxClick={(e) => {
-                    if (e.button === 1) {
+              <SideBar.List className="note-list">
+                {notes.map((note, index) => (
+                  <SideBar.List.Item
+                    value={note.title || '<empty name>'}
+                    key={`note-list-${index}`}
+                    onClick={() => {
                       setCurrentNoteID(index);
-                      setShowDeleteModal(true);
-                    }
-                  }}
-                  className={cn({
-                    active: index === currentNoteID,
-                    placeholder: note.title === ''
-                  })}
-                />
-              ))}
-            </SideBar.List>,
-            <SideBar.List className="tag-list">
-              {tags.map((tag, index) => (
-                <Tag
-                  key={`tag-list-${index}`}
-                  title={tag.title}
-                  color={tag.color}
-                />
-              ))}
-            </SideBar.List>
-          )}
+                    }}
+                    onAuxClick={(e) => {
+                      if (e.button === 1) {
+                        setCurrentNoteID(index);
+                        setShowDeleteModal(true);
+                      }
+                    }}
+                    className={cn({
+                      active: index === currentNoteID,
+                      placeholder: note.title === '',
+                    })}
+                  />
+                ))}
+              </SideBar.List>,
+              <SideBar.List className="tag-list">
+                {tags.map((tag, index) => (
+                  <Tag
+                    key={`tag-list-${index}`}
+                    title={tag.title}
+                    color={tag.color}
+                  />
+                ))}
+              </SideBar.List>
+            )}
 
-          <SideBar.Header
-            value={activeListName === 'notes' ? 'tags' : 'notes'}
-            className="alt"
-            onClick={() => {
-              setActiveList((state) => (state === 'notes' ? 'tags' : 'notes'));
-            }}
-          />
-        </SideBar>
+            <SideBar.Header
+              value={activeListName === 'notes' ? 'tags' : 'notes'}
+              className="alt"
+              onClick={() => {
+                setActiveList((state) =>
+                  state === 'notes' ? 'tags' : 'notes'
+                );
+              }}
+            />
+          </SideBar>
+        )}
 
         {renderIf(
           currentNoteID >= 0,
           <Note key={currentNoteID}>
+            <Note.Header onDoubleClick={() => setCurrentNoteID(-1)}>
+              <Note.Header.Title>
+                <Editable
+                  as="h3"
+                  className="note-title"
+                  value={getCurrentNote()?.title || ''}
+                  placeholder="<empty name>"
+                  onChange={(e) => {
+                    e.currentTarget.style.width = `${e.currentTarget.value.length}ch`;
+                    updateCurrentNote((n) => ({
+                      ...n,
+                      title: e.target.value,
+                    }));
+                  }}
+                />
+              </Note.Header.Title>
+              <Note.Header.Controls>
+                <button
+                  className="button note-control"
+                  disabled={currentNoteID < 0}
+                  onClick={() => {
+                    setShowDeleteModal(true);
+                  }}
+                >
+                  delete
+                </button>
+              </Note.Header.Controls>
+            </Note.Header>
+
             <Note.Meta>
               <Note.Meta.Tags>
                 {getCurrentNote()?.tags.map((tag, index) => (
@@ -333,7 +345,11 @@ export default function App() {
                 }}
               />
             </Note.Content>
-          </Note>
+          </Note>,
+
+          <div className="note-placeholder">
+            <div className="placeholder-message">Quicknotes</div>
+          </div>
         )}
       </main>
 

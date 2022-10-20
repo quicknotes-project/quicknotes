@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import MDEditor, { ContextStore } from '@uiw/react-md-editor';
+import rehypeSanitize from 'rehype-sanitize';
 import { cn, formatDate } from '../../utils';
 import {
   Changeable,
@@ -13,7 +14,6 @@ import {
   Styleable,
 } from '../../types';
 import './Note.css';
-import rehypeSanitize from 'rehype-sanitize';
 
 export default function Note({ children }: Nestable) {
   return <div className="note">{children}</div>;
@@ -23,7 +23,7 @@ interface HeaderProps extends Nestable, Clickable<HTMLDivElement> {}
 
 function Header({ onDoubleClick, children }: HeaderProps) {
   return (
-    <div className="note-header" onDoubleClick={onDoubleClick}>
+    <div className="note-header header" onDoubleClick={onDoubleClick}>
       {children}
     </div>
   );
@@ -79,15 +79,15 @@ function Content({ className, children }: ContentProps) {
   return (
     <div
       className={cn('note-content', className)}
-      onClick={(e) => {
-        const textareas = [
-          ...e.currentTarget.querySelectorAll('textarea').values(),
-        ];
-        if (textareas.length === 0) return;
-        const last = textareas[textareas.length - 1];
-        last.setSelectionRange(last.value.length, last.value.length);
-        last.focus();
-      }}
+      // onClick={(e) => {
+      //   const textareas = [
+      //     ...e.currentTarget.querySelectorAll('textarea').values(),
+      //   ];
+      //   if (textareas.length === 0) return;
+      //   const last = textareas[textareas.length - 1];
+      //   last.setSelectionRange(last.value.length, last.value.length);
+      //   last.focus();
+      // }}
     >
       {children}
     </div>
@@ -160,12 +160,16 @@ interface MarkdownProps
 
 function Markdown({ value, onChange, onContextMenu, style }: MarkdownProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const [editorHeight, setEditorHeight] = useState("200px")
+  const [editorHeight, setEditorHeight] = useState('200px');
   useEffect(() => {
     setEditorHeight(wrapperRef.current?.scrollHeight + 'px');
   }, []);
   return (
-    <div ref={wrapperRef} className="note-markdown-wrapper" data-color-mode="light">
+    <div
+      ref={wrapperRef}
+      className="note-markdown-wrapper"
+      data-color-mode="light"
+    >
       <MDEditor
         value={value}
         onChange={onChange}
@@ -173,7 +177,7 @@ function Markdown({ value, onChange, onContextMenu, style }: MarkdownProps) {
         previewOptions={{ rehypePlugins: [[rehypeSanitize]] }}
         preview="preview"
         visibleDragbar={false}
-        className='note-markdown-editor'
+        className="note-markdown-editor"
         style={{ ...style }}
         height={editorHeight}
       />

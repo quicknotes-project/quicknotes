@@ -20,7 +20,7 @@ export function AuthProvider({ children }: Nestable) {
   const [username, setUser] = useState(store.get('username'));
 
   const saveUsername = (value: string) => {
-    store.set('username', JSON.stringify(value));
+    store.set('username', value);
     setUser(value);
   };
 
@@ -32,7 +32,7 @@ export function AuthProvider({ children }: Nestable) {
   const [fullname, setFullname] = useState(store.get('fullname'));
 
   const saveFullname = (value: string) => {
-    store.set('fullname', JSON.stringify(value));
+    store.set('fullname', value);
     setFullname(value);
   };
 
@@ -40,18 +40,6 @@ export function AuthProvider({ children }: Nestable) {
     store.remove('fullname');
     setFullname(null);
   };
-
-  // const [sessionID, setSessionID] = useState(store.get('session_id'));
-
-  // const saveSessionID = (value: string) => {
-  //   store.set('session_id', JSON.stringify(value));
-  //   setSessionID(value);
-  // };
-
-  // const unsetSessionID = () => {
-  //   store.remove('session_id');
-  //   setSessionID(null);
-  // };
 
   const tryLogin = async (username: string, password: string) => {
     const res = await AuthService.tryLogin(username, password);
