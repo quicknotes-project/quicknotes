@@ -21,7 +21,7 @@
 
   --box-shadow: .4em .4em rgba(55, 55, 55, 0.7);
 
-  font-size: 1.4rem;
+  /* font-size: 1.4rem; */
 }
 
 *,
@@ -32,29 +32,34 @@
 
 h3 {
   margin: 0;
+  font-size: 1.2rem;
   text-align: center;
 }
 
-button {
+.button {
   cursor: pointer;
   padding-inline: .3em;
-  border-top-color: var(--border-light-color);
-  border-left-color: var(--border-light-color);
-  border-bottom-color: var(--border-light-color);
-  border-right-color: var(--border-light-color);
+  border-color: var(--border-light-color);
   background-color: var(--bg-color);
-  font-size: 1rem;
+  font-size: 1em;
   font-family: serif;
   color: var(--color)
 }
 
-button:disabled {
+.button:disabled {
   cursor: default;
   color: var(--accent-bg-color) !important;
 }
 
-input {
-  font-size: 1rem;
+.input {
+  /* font-size: 1rem; */
+}
+
+.pill {
+  padding: .2em .3em;
+  border-radius: .3em;
+  font-family: sans-serif;
+  color: white;
 }
 
 .invisible {

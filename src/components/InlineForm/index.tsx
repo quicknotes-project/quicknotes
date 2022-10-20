@@ -2,17 +2,19 @@ import { cn } from '../../utils';
 import {
   Changeable,
   Classable,
+  Focusable,
   HasValue,
+  IDable,
   Nameable,
   Styleable,
-  Submittable,
 } from '../../types';
-import './InlineForm.css'
+import './InlineForm.css';
 
 interface InlineFormProps
   extends HasValue<string>,
+    IDable,
     Changeable<HTMLInputElement>,
-    Submittable<HTMLFormElement>,
+    Focusable<HTMLInputElement>,
     Nameable,
     Classable,
     Styleable {
@@ -20,30 +22,32 @@ interface InlineFormProps
 }
 
 export default function InlineForm({
+  id,
   name,
   value,
+  onBlur,
   onChange,
-  onSubmit,
   className,
   placeholder,
   style,
 }: InlineFormProps) {
   return (
-    <form onSubmit={onSubmit}>
+    <form>
       <input
         type="text"
         name={name}
-        id={`inline-form-${name}`}
+        id={id || `inline-form-${name}`}
         value={value}
         onChange={onChange}
+        onBlur={onBlur}
         placeholder={placeholder}
-        className={cn('inline-form-input', className)}
+        className={cn('input inline-form-input', className)}
         style={{
-          width: `calc(2ch + ${value.length}ch)`,
-          textAlign: 'center',
+          width: `calc(${value.length}ch)`,
           ...style,
         }}
       />
+      <input type="submit" hidden />
     </form>
   );
 }

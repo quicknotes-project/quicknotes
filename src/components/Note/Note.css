@@ -20,6 +20,11 @@
   border-bottom: var(--border-thin) solid #333;
 }
 
+.note-title {
+  /* font-weight: bold; */
+  font: bold 1.2rem serif;
+}
+
 .note-title-wrapper {
   /* grid-column-start: 2; */
   user-select: none;
@@ -104,9 +109,17 @@
 .note-content {
   min-width: 0;
   height: 100%;
-  padding: .7em;
+  /* padding: .7em; */
   overflow-y: scroll;
   background-color: white;
+}
+
+.note-markdown-wrapper {
+  min-height: 100%;
+}
+
+.w-md-editor-toolbar {
+  border-radius: unset;
 }
 
 .note-text-wrapper {

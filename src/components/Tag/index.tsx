@@ -1,12 +1,21 @@
-import { HasValue, Substitutable } from '../../types';
+import { Changeable, Substitutable } from '../../types';
+import Editable from '../Editable';
 import './Tag.css';
-import Pill from '../Pill';
 
-interface TagProps extends Substitutable {
+interface TagProps extends Substitutable, Changeable<HTMLInputElement> {
   title: string;
   color: string;
 }
 
-export default function Tag({ title, color, as }: TagProps): JSX.Element {
-  return <Pill as={as || 'li'} value={title} color={color} className="tag" />;
+export default function Tag({ title, color, as, onChange }: TagProps): JSX.Element {
+  return (
+    <Editable
+      as={as}
+      name={`tag-${title}`}
+      value={title}
+      onChange={onChange}
+      className="pill tag"
+      style={{ '--tag-color': color } as React.CSSProperties}
+    />
+  );
 }

@@ -42,7 +42,7 @@
   min-height: 0;
   height: 100%;
   display: grid;
-  grid-template-columns: minmax(120px, 300px) auto;
+  grid-template-columns: minmax(120px, 200px) auto;
   grid-template-rows: minmax(3em, auto) 1fr;
 }
 

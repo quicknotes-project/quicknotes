@@ -44,6 +44,11 @@ export interface Placeholderable {
   placeholder?: string
 }
 
+export interface Focusable<T extends HTMLElement> {
+  onFocus?: React.FocusEventHandler<T>
+  onBlur?: React.FocusEventHandler<T>
+}
+
 export interface Validatable {
   valid?: boolean;
   invalid?: boolean;
@@ -53,9 +58,13 @@ export interface Validatable {
 
 export interface Clickable<T extends HTMLElement> {
   onClick?: React.MouseEventHandler<T>;
-  onAuxClick?: React.MouseEventHandler<HTMLLIElement>
+  onAuxClick?: React.MouseEventHandler<T>
   onDoubleClick?: React.MouseEventHandler<T>;
-  onContextMenu?: React.MouseEventHandler<HTMLTextAreaElement>;
+  onContextMenu?: React.MouseEventHandler<T>;
+}
+
+export interface HasValue<T> {
+  value: T;
 }
 
 export interface Changeable<T extends HTMLElement> {
@@ -66,9 +75,8 @@ export interface Submittable<T extends HTMLElement> {
   onSubmit?: React.FormEventHandler<T>
 }
 
-export interface HasValue<T> {
-  value: T;
-}
+export interface Inputtable<TValue, TElement extends HTMLElement>
+  extends HasValue<TValue>, Changeable<TElement> { }
 
 export interface HasCoords {
   x: number;

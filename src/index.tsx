@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
-import reportWebVitals from './reportWebVitals';
-import App from './App';
-import { AuthProvider } from './contexts/AuthContext';
-import './index.css';
-import './utility.css';
-import RequireAuth from './components/RequireAuth';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import AuthPage from './pages/AuthPage';
+import App from './App';
+import RequireAuth from './components/RequireAuth';
+import { AuthProvider } from './contexts/AuthContext';
+import reportWebVitals from './reportWebVitals';
+import './utility.css';
+import './index.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

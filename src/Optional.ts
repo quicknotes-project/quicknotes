@@ -31,3 +31,4 @@ export function handleOption<T, S, F>(
       ? handleSuccess(option.value)
       : handleFail(option.message);
 }
+

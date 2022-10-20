@@ -67,8 +67,12 @@ export function isString(value: any): value is string {
 
 export function safeJSONParse<T>(guard: (value: any) => value is T): (text: string) => Optional<T> {
   return (text: string) => {
-    const parsed = JSON.parse(text)
-    if (!guard(parsed)) return makeFailed("bad format")
-    return makeSuccessful(parsed)
+    try {
+      const parsed = JSON.parse(text)
+      if (!guard(parsed)) return makeFailed("bad format")
+      return makeSuccessful(parsed)
+    } catch (error) {
+      return makeFailed("bad format")
+    }
   }
 }

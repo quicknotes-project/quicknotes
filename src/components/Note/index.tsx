@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react';
+import MDEditor, { ContextStore } from '@uiw/react-md-editor';
 import { cn, formatDate } from '../../utils';
 import {
   Changeable,
@@ -11,7 +13,7 @@ import {
   Styleable,
 } from '../../types';
 import './Note.css';
-import { useEffect, useRef, useState } from 'react';
+import rehypeSanitize from 'rehype-sanitize';
 
 export default function Note({ children }: Nestable) {
   return <div className="note">{children}</div>;
@@ -78,7 +80,9 @@ function Content({ className, children }: ContentProps) {
     <div
       className={cn('note-content', className)}
       onClick={(e) => {
-        const textareas = [...e.currentTarget.querySelectorAll('textarea').values()];
+        const textareas = [
+          ...e.currentTarget.querySelectorAll('textarea').values(),
+        ];
         if (textareas.length === 0) return;
         const last = textareas[textareas.length - 1];
         last.setSelectionRange(last.value.length, last.value.length);
@@ -136,12 +140,49 @@ function Text({
 }
 
 function Whiteboard() {
-  return <div className="note-whiteboard">
-    <canvas onClick={(e) => e.stopPropagation()}></canvas>
-  </div>;
+  return (
+    <div className="note-whiteboard">
+      <canvas onClick={(e) => e.stopPropagation()}></canvas>
+    </div>
+  );
+}
+
+interface MarkdownProps
+  extends HasValue<string>,
+    Clickable<HTMLDivElement>,
+    Styleable {
+  onChange?: (
+    value?: string,
+    event?: React.ChangeEvent<HTMLTextAreaElement>,
+    state?: ContextStore
+  ) => void;
+}
+
+function Markdown({ value, onChange, onContextMenu, style }: MarkdownProps) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [editorHeight, setEditorHeight] = useState("200px")
+  useEffect(() => {
+    setEditorHeight(wrapperRef.current?.scrollHeight + 'px');
+  }, []);
+  return (
+    <div ref={wrapperRef} className="note-markdown-wrapper" data-color-mode="light">
+      <MDEditor
+        value={value}
+        onChange={onChange}
+        onContextMenu={onContextMenu}
+        previewOptions={{ rehypePlugins: [[rehypeSanitize]] }}
+        preview="preview"
+        visibleDragbar={false}
+        className='note-markdown-editor'
+        style={{ ...style }}
+        height={editorHeight}
+      />
+    </div>
+  );
 }
 
 Content.Text = Text;
 Content.Whiteboard = Whiteboard;
+Content.Markdown = Markdown;
 
 Note.Content = Content;
