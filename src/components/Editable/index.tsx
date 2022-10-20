@@ -1,34 +1,31 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import InlineForm from '../InlineForm';
 import {
   Changeable,
   Classable,
   Clickable,
   HasValue,
-  Nameable,
+  Placeholderable,
   Styleable,
-  Submittable,
   Substitutable,
 } from '../../types';
 import './Editable.css';
-import { useState } from 'react';
-import { useRef } from 'react';
-import { useEffect } from 'react';
+import { cn, renderIf } from '../../utils';
 
 interface EditableProps
   extends Classable,
     Substitutable,
+    Placeholderable,
     HasValue<string>,
     Changeable<HTMLInputElement>,
-  Clickable<HTMLDivElement>,
-    Styleable,
-    Nameable {}
+    Clickable<HTMLDivElement>,
+    Styleable {}
 
 export default function Editable({
   as,
-  name,
   value,
   onChange,
+  placeholder,
   className,
   style,
 }: EditableProps) {
@@ -42,23 +39,38 @@ export default function Editable({
   return (
     <div
       ref={wrapperRef}
+      className="editable-wrapper"
       onClick={() => {
         if (editable) return;
         setEditable((state) => !state);
       }}
     >
-      {editable ? (
+      {renderIf(
+        editable,
         <InlineForm
-          id={`editable-input-${name}`}
-          name={name}
           value={value}
           onChange={onChange}
+          onSubmit={(e) => {
+            e.preventDefault();
+            setEditable(false);
+          }}
           onBlur={() => setEditable(false)}
-          className={className}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              setEditable(false);
+            }
+          }}
+          className={cn(className, 'editable-input')}
           style={style}
-        />
-      ) : (
-        React.createElement(as || 'div', { className, style }, value)
+        />,
+        React.createElement(
+          as || 'div',
+          {
+            className: cn(className, 'editable', { placeholder: value === '' }),
+            style,
+          },
+          value || placeholder
+        )
       )}
     </div>
   );

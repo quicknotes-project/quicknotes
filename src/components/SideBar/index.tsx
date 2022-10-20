@@ -1,7 +1,6 @@
 import { cn } from '../../utils';
 import { Classable, Clickable, HasValue, Nestable } from '../../types';
 import './SideBar.css';
-import classNames from 'classnames';
 
 interface SideBarProps extends Nestable {}
 

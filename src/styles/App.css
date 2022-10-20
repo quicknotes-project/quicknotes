@@ -56,6 +56,7 @@
   flex-wrap: wrap;
   align-items: flex-start;
   gap: .3em;
+  font-size: .8em;
 }
 
 #search-query {

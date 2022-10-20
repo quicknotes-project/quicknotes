@@ -3,7 +3,7 @@ import { createContext, useContext, useState } from 'react';
 import store from '../store';
 import { Maybe, Nestable } from '../types';
 import * as AuthService from '../services/AuthService';
-import { isSuccessful } from '../Optional';
+import { isSuccessful } from '../utils/Optional';
 
 interface AuthAPI {
   username: Maybe<string>;

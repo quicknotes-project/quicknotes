@@ -10,14 +10,6 @@ export function getRandom(first: number, second?: number): number {
   return min + (max - min) * Math.random();
 }
 
-// export function generateColor(): string {
-//   const color = Array.from(Array(3))
-//     .map(() => Math.round(getRandom(128, 255))
-//       .toString(16))
-//     .join('');
-//   return `#${color}`;
-// }
-
 export function generateRandomColor(): string {
   const h = getRandom(360)
   const s = getRandom(1)

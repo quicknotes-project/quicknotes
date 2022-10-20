@@ -1,0 +1,7 @@
+.editable {
+  cursor: pointer;
+}
+
+.editable-input:focus {
+  outline: none;
+}

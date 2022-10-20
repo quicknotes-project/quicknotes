@@ -1,43 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './contexts/AuthContext';
-import TagEl from './components/Tag';
+import Tag from './components/Tag';
 import Modal from './components/Modal';
-import NoteEl from './components/Note';
+import Note from './components/Note';
 import Toggle from './components/Toggle';
 import Editable from './components/Editable';
 import ToolBar from './components/ToolBar';
 import SideBar from './components/SideBar';
 import SearchBar from './components/SearchBar';
 import InlineForm from './components/InlineForm';
-// import ButtonSelect from './components/ButtonSelect';
 import { cn, generateRandomColor, renderIf, safeJSONParse } from './utils';
-import { handleOption } from './Optional';
-import './App.css';
-
-// const fontFamilies = ['serif', 'sans-serif', 'monospace', 'cursive'] as const;
+import { handleOption } from './utils/Optional';
+import './styles/App.css';
 
 const listNames = ['notes', 'tags'] as const;
 
 type ListNames = typeof listNames[number];
 
-interface Tag {
+interface TagData {
   title: string;
   color: string;
 }
 
-function NewTag(title: string, color: string): Tag {
+function NewTag(title: string, color: string): TagData {
   return { title, color };
 }
 
-interface Note {
+interface NoteData {
   title: string;
   text: string;
-  tags: Tag[];
+  tags: TagData[];
   createdAt: Date;
   modifiedAt: Date;
 }
 
-function isNote(value: any): value is Note {
+function isNoteData(value: any): value is NoteData {
   return (
     'title' in value &&
     'text' in value &&
@@ -47,17 +44,17 @@ function isNote(value: any): value is Note {
   );
 }
 
-function isNoteArray(value: any): value is Note[] {
-  return Array.isArray(value) && value.every(isNote);
+function isNoteDataArray(value: any): value is NoteData[] {
+  return Array.isArray(value) && value.every(isNoteData);
 }
 
-function NewNote(
+function NewNoteData(
   title: string,
   text: string,
-  tags?: Tag[],
+  tags?: TagData[],
   createdAt?: Date,
   modifiedAt?: Date
-): Note {
+): NoteData {
   return {
     title,
     text,
@@ -75,28 +72,29 @@ const mockTags = {
   smth: NewTag('smth', generateRandomColor()),
 } as const;
 
-const mockNotes: Note[] = [
-  NewNote(
+const mockNotes: NoteData[] = [
+  NewNoteData(
     'school',
     'hahaha i love school '.repeat(48),
     [mockTags.cool, mockTags.awesome],
     new Date(Date.parse('2022-10-01')),
     new Date(Date.parse('2022-10-01'))
   ),
-  NewNote(
+  NewNoteData(
     'foo',
     'bar',
     [mockTags.cool, mockTags.awesome, mockTags.awesome, mockTags.awesome],
     new Date(Date.parse('2022-09-30')),
     new Date(Date.parse('2022-09-30'))
   ),
-  NewNote('something', 'something', [mockTags.nice, mockTags.wow]),
-  NewNote('something', 'something'),
-  NewNote('something', 'something'),
-  NewNote('something', 'something'),
-  NewNote('something', 'something'),
-  NewNote('something', 'something'),
-  NewNote('something', 'something'),
+  NewNoteData('something', 'something', [mockTags.nice, mockTags.wow]),
+  NewNoteData('', 'something'),
+  NewNoteData('something', 'something'),
+  NewNoteData('something', 'something'),
+  NewNoteData('something', 'something'),
+  NewNoteData('something', 'something'),
+  NewNoteData('something', 'something'),
+  NewNoteData('something', 'something'),
 ];
 
 export default function App() {
@@ -105,17 +103,12 @@ export default function App() {
   const [currentNoteID, setCurrentNoteID] = useState<number>(-1);
   const [activeListName, setActiveList] = useState<ListNames>('notes');
 
-  const [notes, setNotes] = useState<Note[]>(mockNotes);
+  const [notes, setNotes] = useState<NoteData[]>(mockNotes);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
 
-  const [titleEditing, setTitleEditing] = useState(false);
-  const [tagsEditing, setTagsEditing] = useState(false);
-  const [tagsAppending, setTagsAppending] = useState(false);
-
-  // const [showFontFamilies, setShowFontFamilies] = useState(false);
-  // const [fontFamily, setFontFamily] = useState('serif');
+  const [showNewTag, setShowNewTag] = useState(false);
 
   // const [searchTags, setSearchTags] = useState<Tag[]>();
 
@@ -131,7 +124,7 @@ export default function App() {
   const getCurrentNote = () =>
     currentNoteID < 0 ? null : notes[currentNoteID];
 
-  const updateCurrentNote = (transform: (prev: Note) => Note) => {
+  const updateCurrentNote = (transform: (prev: NoteData) => NoteData) => {
     setNotes((state) => {
       const prev = state.find((_, i) => i === currentNoteID);
       return prev
@@ -140,7 +133,7 @@ export default function App() {
     });
   };
 
-  const prependNotes = (note: Note) => {
+  const prependNotes = (note: NoteData) => {
     setNotes((state) => [note, ...state]);
   };
 
@@ -154,7 +147,7 @@ export default function App() {
     if (res.status !== 200) return;
 
     const raw = await res.json();
-    const notesOption = safeJSONParse(isNoteArray)(raw);
+    const notesOption = safeJSONParse(isNoteDataArray)(raw);
 
     handleOption(setNotes, () => {})(notesOption);
   };
@@ -170,7 +163,9 @@ export default function App() {
           <button
             className="button"
             onClick={() => {
-              prependNotes(NewNote('New note', '', [], new Date(), new Date()));
+              prependNotes(
+                NewNoteData('New note', '', [], new Date(), new Date())
+              );
               setCurrentNoteID(0);
             }}
           >
@@ -194,20 +189,20 @@ export default function App() {
 
         {renderIf(
           currentNoteID >= 0,
-          <NoteEl.Header onDoubleClick={() => setCurrentNoteID(-1)}>
-            <NoteEl.Header.Title>
+          <Note.Header onDoubleClick={() => setCurrentNoteID(-1)}>
+            <Note.Header.Title>
               <Editable
                 as="h3"
                 className="note-title"
-                name="note-title"
                 value={getCurrentNote()?.title || ''}
+                placeholder="<empty name>"
                 onChange={(e) => {
-                  e.currentTarget.style.width = `${e.currentTarget.value.length}ch`;
+                  e.currentTarget.style.width = `${e.currentTarget.value.length}ch`;                  
                   updateCurrentNote((n) => ({ ...n, title: e.target.value }));
                 }}
               />
-            </NoteEl.Header.Title>
-            <NoteEl.Header.Controls>
+            </Note.Header.Title>
+            <Note.Header.Controls>
               <button
                 className="button note-control"
                 disabled={currentNoteID < 0}
@@ -217,8 +212,8 @@ export default function App() {
               >
                 delete
               </button>
-            </NoteEl.Header.Controls>
-          </NoteEl.Header>,
+            </Note.Header.Controls>
+          </Note.Header>,
           <div className="note-placeholder">
             <div className="placeholder-message">Quicknotes</div>
           </div>
@@ -243,7 +238,7 @@ export default function App() {
             <SideBar.List className="note-list">
               {notes.map((note, index) => (
                 <SideBar.List.Item
-                  value={note.title}
+                  value={note.title || '<empty name>'}
                   key={`note-list-${index}`}
                   onClick={() => {
                     setCurrentNoteID(index);
@@ -256,13 +251,14 @@ export default function App() {
                   }}
                   className={cn({
                     active: index === currentNoteID,
+                    placeholder: note.title === ''
                   })}
                 />
               ))}
             </SideBar.List>,
             <SideBar.List className="tag-list">
               {tags.map((tag, index) => (
-                <TagEl
+                <Tag
                   key={`tag-list-${index}`}
                   title={tag.title}
                   color={tag.color}
@@ -282,65 +278,22 @@ export default function App() {
 
         {renderIf(
           currentNoteID >= 0,
-          <NoteEl key={currentNoteID}>
-            {/* {renderIf(
-              showFontFamilies,
-              <ButtonSelect
-                value={fontFamily}
-                onClick={(option) => setFontFamily(option)}
-                options={fontFamilies}
-                className="note-fonts"
-              />
-            )} */}
-            <NoteEl.Meta>
-              <NoteEl.Meta.Tags>
-                {/* <li>
-                  <Toggle
-                    className="button"
-                    active={tagsEditing}
-                    onClick={() => {
-                      setTagsEditing((state) => !state);
-                    }}
-                    label="🖉"
-                    labelAlt="✓"
+          <Note key={currentNoteID}>
+            <Note.Meta>
+              <Note.Meta.Tags>
+                {getCurrentNote()?.tags.map((tag, index) => (
+                  <Editable
+                    as="li"
+                    key={`tag-editing-${index}`}
+                    value={tag.title}
+                    onChange={() => {}}
+                    className="pill tag"
+                    style={{ '--tag-color': tag.color } as React.CSSProperties}
                   />
-                </li> */}
-
-                {getCurrentNote()?.tags.map(
-                  (tag, index) => (
-                    // tagsEditing ? (
-                    <Editable
-                      key={`tag-editing-${index}`}
-                      name={`tag-${tag.title}`}
-                      value={tag.title}
-                      onChange={() => {}}
-                      className="pill tag"
-                      style={{ '--tag-color': tag.color } as React.CSSProperties}
-                    />
-                  )
-                  // ) : (
-                  //   <TagEl
-                  //     key={`tag-${index}`}
-                  //     title={tag.title}
-                  //     color={tag.color}
-                  //   />
-                  // )
-                )}
-
-                <li>
-                  <Toggle
-                    active={tagsAppending}
-                    onClick={() => {
-                      setTagsAppending((state) => !state);
-                    }}
-                    label="+"
-                    labelAlt="-"
-                    className="button"
-                  />
-                </li>
+                ))}
 
                 {renderIf(
-                  tagsEditing && tagsAppending,
+                  showNewTag,
                   <li>
                     <InlineForm
                       name="new-tag"
@@ -349,34 +302,25 @@ export default function App() {
                     />
                   </li>
                 )}
-              </NoteEl.Meta.Tags>
 
-              <NoteEl.Meta.Dates
+                <li>
+                  <Toggle
+                    active={showNewTag}
+                    onClick={() => setShowNewTag((state) => !state)}
+                    label="+"
+                    labelAlt="-"
+                    className="button"
+                  />
+                </li>
+              </Note.Meta.Tags>
+
+              <Note.Meta.Dates
                 createdAt={getCurrentNote()?.createdAt}
                 modifiedAt={getCurrentNote()?.modifiedAt}
               />
-            </NoteEl.Meta>
-            <NoteEl.Content>
-              {/* <NoteEl.Content.Text
-                name="text"
-                id="note-content"
-                value={getCurrentNote()?.text ?? ''}
-                onChange={(e) => {
-                  if (currentNoteID < 0) return;
-                  updateCurrentNote((n) => ({
-                    ...n,
-                    text: e.target.value,
-                    modifiedAt: new Date(),
-                  }));
-                }}
-                style={{ fontFamily }}
-                onContextMenu={(e) => {
-                  if (currentNoteID < 0) return;
-                  e.preventDefault();
-                  setShowFontFamilies((state) => !state);
-                }}
-              /> */}
-              <NoteEl.Content.Markdown
+            </Note.Meta>
+            <Note.Content>
+              <Note.Content.Markdown
                 value={getCurrentNote()?.text ?? ''}
                 onChange={(value, e, state) => {
                   console.log(state);
@@ -387,14 +331,9 @@ export default function App() {
                     modifiedAt: new Date(),
                   }));
                 }}
-                // onContextMenu={(e) => {
-                //   if (currentNoteID < 0) return;
-                //   e.preventDefault();
-                //   setShowFontFamilies((state) => !state);
-                // }}
               />
-            </NoteEl.Content>
-          </NoteEl>
+            </Note.Content>
+          </Note>
         )}
       </main>
 
@@ -407,16 +346,17 @@ export default function App() {
         </Modal.Body>
         <Modal.Footer>
           <button
+            className="button red"
             onClick={() => {
               setCurrentNoteID(-1);
               deleteNote(currentNoteID);
               setShowDeleteModal(false);
             }}
-            className="red"
           >
             Delete
           </button>
           <button
+            className="button"
             onClick={() => {
               setShowDeleteModal(false);
             }}
@@ -433,6 +373,7 @@ export default function App() {
         <Modal.Body>
           <div className="d-flex j-c-center">
             <button
+              className="button"
               onClick={() => {
                 signout();
               }}
@@ -443,6 +384,7 @@ export default function App() {
         </Modal.Body>
         <Modal.Footer>
           <button
+            className="button"
             onClick={() => {
               setShowUserModal(false);
             }}

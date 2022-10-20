@@ -5,6 +5,7 @@
   --bdr-color: #333;
 
   --color: black;
+  --ph-color: gray;
   --accent-color: white;
   --link-color: #0d6efd;
   --link-hover-color: #0a58ca;
@@ -19,7 +20,8 @@
   --border-light-color: #e3e3e3;
   --border-dark-color: #969696;
 
-  --box-shadow: .4em .4em rgba(55, 55, 55, 0.7);
+  --box-shadow-color: rgba(55, 55, 55, 0.7);
+  --box-shadow: .4em .4em var(--box-shadow-color);
 
   /* font-size: 1.4rem; */
 }
@@ -60,6 +62,10 @@ h3 {
   border-radius: .3em;
   font-family: sans-serif;
   color: white;
+}
+
+.placeholder {
+  color: gray;
 }
 
 .invisible {

@@ -1,4 +1,4 @@
-import { makeSuccessful, Optional } from "../Optional";
+import { makeSuccessful, Optional } from "../utils/Optional";
 
 export interface LoginData {
   fullname: string;

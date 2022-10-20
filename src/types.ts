@@ -63,8 +63,19 @@ export interface Clickable<T extends HTMLElement> {
   onContextMenu?: React.MouseEventHandler<T>;
 }
 
+export interface KeyAware<T extends HTMLElement> {
+  onKeyDown?: React.KeyboardEventHandler<T>;
+  onKeyDownCapture?: React.KeyboardEventHandler<T>;
+  onKeyUp?: React.KeyboardEventHandler<T>;
+  onKeyUpCapture?: React.KeyboardEventHandler<T>;
+}
+
 export interface HasValue<T> {
   value: T;
+}
+
+export interface Placeholderable {
+  placeholder?: string;
 }
 
 export interface Changeable<T extends HTMLElement> {

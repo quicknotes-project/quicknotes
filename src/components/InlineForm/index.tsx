@@ -5,19 +5,24 @@ import {
   Focusable,
   HasValue,
   IDable,
+  KeyAware,
   Nameable,
   Styleable,
+  Submittable,
 } from '../../types';
 import './InlineForm.css';
+import { useEffect, useRef, useState } from 'react';
 
 interface InlineFormProps
   extends HasValue<string>,
     IDable,
-    Changeable<HTMLInputElement>,
-    Focusable<HTMLInputElement>,
     Nameable,
     Classable,
-    Styleable {
+    Styleable,
+    KeyAware<HTMLInputElement>,
+    Changeable<HTMLInputElement>,
+    Submittable<HTMLFormElement>,
+    Focusable<HTMLInputElement> {
   placeholder?: string;
 }
 
@@ -26,13 +31,29 @@ export default function InlineForm({
   name,
   value,
   onBlur,
+  onKeyDown,
   onChange,
+  onSubmit,
   className,
   placeholder,
   style,
 }: InlineFormProps) {
+  const [width, setWidth] = useState(0);
+  const span = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (!span.current) return;
+    setWidth(span.current.offsetWidth);
+  }, [value]);
   return (
-    <form>
+    <form onSubmit={onSubmit}>
+      <span
+        ref={span}
+        className={cn('input inline-form-input', className)}
+        style={{ position: 'absolute', opacity: 0 }}
+      >
+        {value}
+      </span>
       <input
         type="text"
         name={name}
@@ -40,10 +61,11 @@ export default function InlineForm({
         value={value}
         onChange={onChange}
         onBlur={onBlur}
+        onKeyDown={onKeyDown}
         placeholder={placeholder}
         className={cn('input inline-form-input', className)}
         style={{
-          width: `calc(${value.length}ch)`,
+          width,
           ...style,
         }}
       />

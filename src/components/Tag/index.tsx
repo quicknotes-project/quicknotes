@@ -11,7 +11,6 @@ export default function Tag({ title, color, as, onChange }: TagProps): JSX.Eleme
   return (
     <Editable
       as={as}
-      name={`tag-${title}`}
       value={title}
       onChange={onChange}
       className="pill tag"
