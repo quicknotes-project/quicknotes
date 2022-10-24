@@ -18,9 +18,9 @@ root.render(
       <BrowserRouter>
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
-          <Route path="/notes" element={<Navigate to="/" />} />
+          <Route path="/" element={<Navigate to="/notes" />} />
           <Route
-            path="/"
+            path="/notes"
             element={
               <RequireAuth>
                 <App />

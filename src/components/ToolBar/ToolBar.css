@@ -7,6 +7,10 @@
   background-color: var(--accent-bg-color);
 }
 
+.tool-bar-controls .button {
+  padding: .1em .3em;
+}
+
 .tool-bar-controls {
   display: flex;
   gap: .3em;

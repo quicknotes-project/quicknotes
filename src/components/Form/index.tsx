@@ -55,7 +55,11 @@ function InputGroup({
         type={type || 'text'}
         value={value}
         onChange={onChange}
-        className={cn({ valid: !!valid, invalid: !!invalid }, className)}
+        className={cn(
+          'input',
+          { valid: !!valid, invalid: !!invalid },
+          className
+        )}
         placeholder={placeholder}
       />
       {touched && valid && <div className="valid-message">{validMessage}</div>}

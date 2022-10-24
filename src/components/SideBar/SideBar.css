@@ -1,9 +1,12 @@
 .side-bar {
-  width: clamp(10em, 33%, 20em);
   z-index: 10;
+  width: clamp(10em, 33%, 20em);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   border-right: var(--border-thin) solid #333;
   background-color: var(--bg-color);
-  /* box-shadow: .1em 0 .2em var(--box-shadow-color); */
+  transition: all 150ms;
 }
 
 .side-bar-header-wrapper {
@@ -28,15 +31,6 @@
   color: blue;
 }
 
-.side-bar {
-  min-height: 0;
-  /* min-width: 0; */
-  display: flex;
-  flex-direction: column;
-  /* overflow: scroll; */
-  /* box-shadow: .3em 0 var(--box-shadow-color); */
-}
-
 .list {
   margin: 0;
   margin-bottom: auto;
@@ -47,8 +41,8 @@
 
 .list-item {
   cursor: pointer;
-  padding: 1em;
-  padding-right: .5em;
+  padding-block: .7em;
+  padding-inline: .5em;
   overflow: hidden;
   text-overflow: ellipsis;
 }

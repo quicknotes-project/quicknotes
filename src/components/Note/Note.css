@@ -34,11 +34,13 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
+  /* align-items: center; */
   gap: .3em;
 }
 
 .note-control {
-  height: 2.3em;
+  /* padding: 0 !important; */
+  padding-block: .5em !important;
 }
 
 .note-meta {
@@ -152,7 +154,7 @@
   flex: 1;
   display: grid;
   place-content: center;
-  background-color: #afafaf;
+  background-color: var(--wallpaper);
 }
 
 .placeholder-message {

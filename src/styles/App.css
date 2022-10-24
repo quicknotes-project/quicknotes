@@ -6,7 +6,7 @@
   /* margin-top: 7em; */
   display: flex;
   flex-direction: column;
-  background-color: #ddd;
+  background-color: var(--wallpaper);
   box-shadow: var(--box-shadow);
   /* border: var(--border-thin) solid #333; */
   overflow: hidden;
@@ -16,15 +16,27 @@
   .side-bar {
     position: absolute;
     width: 100%;
-    height: 100%;
+    top: 0;
+    bottom: 0;
+  }
+
+  .modal-content {
+    translate: none;
+  }
+
+  .modal-footer .button {
+    padding-block: .7em;
+    padding-inline: 1em !important;
   }
 }
 
 .app {
+  position: relative;
   min-height: 0;
   height: 100%;
   display: flex;
-
+  background-color: var(--bg-color);
+  /* align-items: stretch; */
   /* display: grid;
   grid-template-columns: minmax(120px, 200px) auto;
   grid-template-rows: minmax(3em, auto) 1fr; */

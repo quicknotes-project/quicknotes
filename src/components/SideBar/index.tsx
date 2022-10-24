@@ -2,10 +2,10 @@ import { cn } from '../../utils';
 import { Classable, Clickable, HasValue, Nestable } from '../../types';
 import './SideBar.css';
 
-interface SideBarProps extends Nestable {}
+interface SideBarProps extends Classable, Nestable {}
 
-export default function SideBar({ children }: SideBarProps) {
-  return <aside className="side-bar">{children}</aside>;
+export default function SideBar({ className, children }: SideBarProps) {
+  return <aside className={cn('side-bar', className)}>{children}</aside>;
 }
 
 interface HeaderProps
@@ -15,7 +15,10 @@ interface HeaderProps
 
 function Header({ value, className, onClick }: HeaderProps) {
   return (
-    <div className={cn('side-bar-header-wrapper header', className)} onClick={onClick}>
+    <div
+      className={cn('side-bar-header-wrapper header', className)}
+      onClick={onClick}
+    >
       <h3 className={cn('side-bar-header', className)}>{value}</h3>
     </div>
   );
@@ -36,12 +39,16 @@ interface ItemProps
 
 function Item({ value, onClick, onAuxClick, className }: ItemProps) {
   return (
-    <li onClick={onClick} onAuxClick={onAuxClick} className={cn('list-item', className)}>
+    <li
+      onClick={onClick}
+      onAuxClick={onAuxClick}
+      className={cn('list-item', className)}
+    >
       {value}
     </li>
   );
 }
 
-List.Item = Item
+List.Item = Item;
 
 SideBar.List = List;

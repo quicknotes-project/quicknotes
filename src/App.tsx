@@ -112,6 +112,8 @@ export default function App() {
 
   const [showNewTag, setShowNewTag] = useState(false);
 
+  const [isMobile, setIsMobile] = useState(false);
+
   // const [searchTags, setSearchTags] = useState<Tag[]>();
 
   const tags = notes
@@ -155,7 +157,13 @@ export default function App() {
   };
 
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 400);
+    window.addEventListener('resize', checkMobile);
+    checkMobile();
+
     fetchData();
+
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   return (
@@ -195,69 +203,70 @@ export default function App() {
       </ToolBar>
 
       <main className="app">
-        {renderIf(
-          showSideBar,
-          <SideBar>
-            <SideBar.Header value={activeListName} />
+        {/* {renderIf(
+          showSideBar, */}
+        <SideBar className={{ 'slide-right': !showSideBar }}>
+          <SideBar.Header value={activeListName} />
 
-            <SearchBar>
-              {renderIf(
-                activeListName === 'notes',
-                <input
-                  type="text"
-                  name="query"
-                  placeholder="Search..."
-                  id="search-query"
-                />,
-                <span id="search-placeholder">Click on tag to search...</span>
-              )}
-            </SearchBar>
-
+          <SearchBar>
             {renderIf(
               activeListName === 'notes',
-              <SideBar.List className="note-list">
-                {notes.map((note, index) => (
-                  <SideBar.List.Item
-                    value={note.title || '<empty name>'}
-                    key={`note-list-${index}`}
-                    onClick={() => {
-                      setCurrentNoteID(index);
-                    }}
-                    onAuxClick={(e) => {
-                      if (e.button === 1) {
-                        setCurrentNoteID(index);
-                        setShowDeleteModal(true);
-                      }
-                    }}
-                    className={cn({
-                      active: index === currentNoteID,
-                      placeholder: note.title === '',
-                    })}
-                  />
-                ))}
-              </SideBar.List>,
-              <SideBar.List className="tag-list">
-                {tags.map((tag, index) => (
-                  <Tag
-                    key={`tag-list-${index}`}
-                    title={tag.title}
-                    color={tag.color}
-                  />
-                ))}
-              </SideBar.List>
+              <input
+                type="text"
+                name="query"
+                placeholder="Search..."
+                id="search-query"
+              />,
+              <span id="search-placeholder">Click on tag to search...</span>
             )}
+          </SearchBar>
 
-            <SideBar.Header
-              value={activeListName === 'notes' ? 'tags' : 'notes'}
-              className="alt"
-              onClick={() => {
-                setActiveList((state) =>
-                  state === 'notes' ? 'tags' : 'notes'
-                );
-              }}
-            />
-          </SideBar>
-        )}
+          {renderIf(
+            activeListName === 'notes',
+            <SideBar.List className="note-list">
+              {notes.map((note, index) => (
+                <SideBar.List.Item
+                  value={note.title || '<empty name>'}
+                  key={`note-list-${index}`}
+                  onClick={() => {
+                    if (isMobile) {
+                      setShowSideBar(false);
+                    }
+                    setCurrentNoteID(index);
+                  }}
+                  onAuxClick={(e) => {
+                    if (e.button === 1) {
+                      setCurrentNoteID(index);
+                      setShowDeleteModal(true);
+                    }
+                  }}
+                  className={cn({
+                    active: index === currentNoteID,
+                    placeholder: note.title === '',
+                  })}
+                />
+              ))}
+            </SideBar.List>,
+            <SideBar.List className="tag-list">
+              {tags.map((tag, index) => (
+                <Tag
+                  key={`tag-list-${index}`}
+                  title={tag.title}
+                  color={tag.color}
+                />
+              ))}
+            </SideBar.List>
+          )}
+
+          <SideBar.Header
+            value={activeListName === 'notes' ? 'tags' : 'notes'}
+            className="alt"
+            onClick={() => {
+              setActiveList((state) => (state === 'notes' ? 'tags' : 'notes'));
+            }}
+          />
+        </SideBar>
+        {/* )} */}
 
         {renderIf(
           currentNoteID >= 0,
@@ -335,7 +344,6 @@ export default function App() {
               <Note.Content.Markdown
                 value={getCurrentNote()?.text ?? ''}
                 onChange={(value, e, state) => {
-                  console.log(state);
                   if (currentNoteID < 0) return;
                   updateCurrentNote((n) => ({
                     ...n,

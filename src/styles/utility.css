@@ -12,18 +12,15 @@
   --accent-link-color: #84bef8;
   --accent-link-hover-color: white;
 
-  /* --bar-height: 4em;  ?? */
-
   --border-wide: 3px;
   --border-thin: 1px;
 
-  --border-light-color: #e3e3e3;
-  --border-dark-color: #969696;
+  --border-color: #e3e3e3;
 
-  --box-shadow-color: rgba(55, 55, 55, 0.7);
+  --box-shadow-color: rgba(0, 0, 0, 0.5);
   --box-shadow: .4em .4em var(--box-shadow-color);
 
-  /* font-size: 1.4rem; */
+  /* font-size: 1.2rem; */
 }
 
 *,
@@ -43,13 +40,19 @@ h3 {
 }
 
 .button {
+  padding-block: .7em;
+  padding-inline: 1em;
   cursor: pointer;
-  padding-inline: .3em;
-  border-color: var(--border-light-color);
+  /* padding-inline: .3em; */
+  border: .15em outset var(--border-color);
   background-color: var(--bg-color);
   font-size: 1em;
   font-family: serif;
   color: var(--color)
+}
+
+.button:active {
+  border-style: inset;
 }
 
 .button:disabled {
@@ -58,7 +61,7 @@ h3 {
 }
 
 .input {
-  /* font-size: 1rem; */
+  font-size: 1rem;
 }
 
 .pill {
@@ -70,6 +73,12 @@ h3 {
 
 .placeholder {
   color: gray;
+}
+
+.slide-right {
+  position: absolute;
+  height: 100%;
+  translate: -100% 0;
 }
 
 .invisible {
@@ -118,7 +127,7 @@ input.editing:focus {
   outline: initial;
 }
 
-button.red {
+.button.red {
   background-color: red;
   border-top-color: #ffa0a0;
   border-left-color: #fe7777;
@@ -127,7 +136,7 @@ button.red {
   color: white;
 }
 
-button.edit {
+.button.edit {
   margin: 0;
   padding: 0;
   width: 1.6em;
@@ -136,7 +145,7 @@ button.edit {
   line-height: 1.4em;
 }
 
-button.edit.active {
+.button.edit.active {
   border-style: inset;
   background-color: var(--accent-bg-color);
   color: var(--accent-color);
