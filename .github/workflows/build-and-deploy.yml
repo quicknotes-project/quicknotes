@@ -18,10 +18,9 @@ jobs:
 #           run: npm ci
 #         - name: Build
 #           run: npm run build
-        - name: Install SSH private key
-          run: |
-            install -m 600 -D /dev/null ~/.ssh/id_rsa
-            echo $key > ~/.ssh/id_rsa
+        - uses: webfactory/ssh-agent@v0.6.0
+          with:
+            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
         - name: Deploy
           run: | 
             link=`curl -sv -H "Authorization: Bearer $token" -H "Accept: application/vnd.github.v3.raw" https://api.github.com/repos/quicknotes-project/links/contents/link.txt`
@@ -33,4 +32,4 @@ jobs:
             port=$(echo $hostport | sed -e 's,^.*:,:,g' -e 's,.*:\([0-9]*\).*,\1,g' -e 's,[^0-9],,g')
             mkdir build
             echo "test" > build/file
-            rsync -zav --delete -e "ssh -o StrictHostKeyChecking=no -p $port" build/ pi@$host:/home/pi/minimal-openresty-server/dist/ 
+            rsync -zav --delete -e "ssh -p $port" build/ pi@$host:/home/pi/minimal-openresty-server/dist/ 
