@@ -1,0 +1,24 @@
+name: aaaa test
+on: 
+  push:
+    branches:
+      - master
+jobs:
+  first-test-job:
+    name: aaa1 
+      steps:
+        - name: say AAA
+          run: |
+            echo "AAA"
+        - name: say something else
+          env: 
+            var1: something
+            var2: else
+          run: |
+            echo $var1 $var2
+        - name: hz che eto takoe
+          uses: actions/checkout@v3 
+
+  second-test-job:
+    name: aaa2 
+      
