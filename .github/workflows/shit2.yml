@@ -1,21 +1,18 @@
-name: aaaa test
-run-name: sukaaaa rabotay
-on: 
-  push:
-    branches:
-      - master
+name: aaa
+run-name: aaaa
+on: [push]
 jobs:
-  first-test-job:
-      runs-on: ubuntu-latest
-      steps:
-        - name: say AAA
-          run: |
-            echo "AAA"
-        - name: say something else
-          env: 
-            var1: something
-            var2: else
-          run: |
-            echo $var1 $var2
-        - name: hz che eto takoe
-          uses: actions/checkout@v3 
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "a"
+      - run: echo "a!"
+      - run: echo "a a"
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - run: echo "a."
+      - run: echo "🖥️aaaa"
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+      - run: echo "sukaaa   AAA"
