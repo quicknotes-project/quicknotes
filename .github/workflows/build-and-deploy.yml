@@ -10,22 +10,17 @@ jobs:
         token: ${{ secrets.LINK_TOKEN }}
       steps:
         - uses: actions/checkout@v3 
-        - uses: actions/setup-node@v3
-          with:
-            node-version: 18
-        - run: npm ci
-        - run: npm run build
+#         - uses: actions/setup-node@v3
+#           with:
+#             node-version: 18
+#         - run: npm ci
+#         - run: npm run build
         - run: | 
-            link=`curl --silent \
-              --verbose \
-              --header "Authorization: Bearer $token" \                                                                          
-              --header "Accept: application/vnd.github.v3.raw" \                                                                            
-              --url "https://api.github.com/repos/quicknotes-project/links/contents/link.txt"
-            `
+            link=`curl -sv -H "Authorization: Bearer $token" -H "Accept: application/vnd.github.v3.raw" https://api.github.com/repos/quicknotes-project/links/contents/link.txt`
             proto=$(echo $link | grep :// | sed -e's,^\(.*://\).*,\1,g')                                                            
             url=$(echo ${link/$proto/})                                                                                             
             user=$(echo $url | grep @ | cut -d@ -f1)                                                                                
             hostport=$(echo ${url/$user@/} | cut -d/ -f1)                                                                           
             host=$(echo $hostport | sed -e 's,:.*,,g')                                                                              
             port=$(echo $hostport | sed -e 's,^.*:,:,g' -e 's,.*:\([0-9]*\).*,\1,g' -e 's,[^0-9],,g') 
-        - run: rsync -zav --delete -e "ssh -p $port" build/ pi@$host:/home/pi/minimal-openresty-server/dist/ 
+#         - run: rsync -zav --delete -e "ssh -p $port" build/ pi@$host:/home/pi/minimal-openresty-server/dist/ 
