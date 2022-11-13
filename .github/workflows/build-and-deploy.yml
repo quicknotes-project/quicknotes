@@ -1,41 +1,52 @@
 name: Build & Deploy
 on: 
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    branches:
+      - master
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
+    env: 
       token: ${{ secrets.LINKS_TOKEN }}
     steps:
-      - name: Fetch & save
-        run: |
-          link=`curl -sv -H "Authorization: Bearer $token" -H "Accept: application/vnd.github.v3.raw" -L https://api.github.com/repos/quicknotes-project/links/contents/link.txt`
-          proto=$(echo $link | grep :// | sed -e's,^\(.*://\).*,\1,g')
-          url=$(echo ${link/$proto/})
-          user=$(echo $url | grep @ | cut -d@ -f1)
-          hostport=$(echo ${url/$user@/} | cut -d/ -f1)
-          host=$(echo $hostport | sed -e 's,:.*,,g')
-          port=$(echo $hostport | sed -e 's,^.*:,:,g' -e 's,.*:\([0-9]*\).*,\1,g' -e 's,[^0-9],,g')
-          echo "host=$host" >> $GITHUB_ENV
-          echo "port=$port" >> $GITHUB_EN          
-      - uses: actions/checkout@v3 
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: Install
-        run: npm ci
-      - name: Build
-        run: npm run build      
-      - name: Rsync Deployments Action
-        uses: Burnett01/rsync-deployments@5.2.1
-        with:
-          switches: -avz --delete
-          path: build/
-          remote_path: /home/pi/minimal-openresty-server/dist/
-          remote_host: ${{ env.host }}
-          remote_port: ${{ env.port }}
-          remote_user: pi
-          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+        - name: Fetch & save
+          run: |
+            link=`curl -sv -H "Authorization: Bearer $token" -H "Accept: application/vnd.github.v3.raw" https://api.github.com/repos/quicknotes-project/links/contents/link.txt`
+            proto=$(echo $link | grep :// | sed -e's,^\(.*://\).*,\1,g')
+            url=$(echo ${link/$proto/})
+            user=$(echo $url | grep @ | cut -d@ -f1)
+            hostport=$(echo ${url/$user@/} | cut -d/ -f1)
+            host=$(echo $hostport | sed -e 's,:.*,,g')
+            port=$(echo $hostport | sed -e 's,^.*:,:,g' -e 's,.*:\([0-9]*\).*,\1,g' -e 's,[^0-9],,g')
+            echo "host=$host" >> $GITHUB_ENV
+            echo "port=$port" >> $GITHUB_ENV
+        - uses: actions/checkout@v3 
+        - uses: actions/setup-node@v3
+          with:
+            node-version: 18
+        - name: Install
+          run: npm ci
+        - name: Build
+          run: npm run build
+#           run: |
+#             mkdir build
+#             echo "test" > build/file
+        - name: Rsync Deployments Action
+          uses: Burnett01/rsync-deployments@5.2.1
+          with:
+            switches: -avz --delete
+            path: build/
+            remote_path: /home/pi/minimal-openresty-server/dist/
+            remote_host: ${{ env.host }}
+            remote_port: ${{ env.port }}
+            remote_user: pi
+            remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+#         - run: | 
+#             mkdir -p ~/.ssh
+#             echo $key > ~/.ssh/id_rsa
+#             chmod 600 ~/.ssh/id_rsa
+#             ssh-keyscan $host >> ~/.ssh/known_hosts
+#             echo $host
+#             echo $port
+#             echo ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts -p $port pi@$host 'touch ~/test' 
+#             ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts -p $port pi@$host 'touch ~/test' 
