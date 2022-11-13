@@ -21,12 +21,6 @@ jobs:
 #         - uses: webfactory/ssh-agent@v0.6.0
 #           with:
 #             ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-        - name: Set up SSH
-          run: |
-            mkdir -p ~/.ssh
-            echo $key > ~/.ssh/id_rsa
-            chmod 600 ~/.ssh/id_rsa
-            ssh-keyscan github.com >> ~/.ssh/known_hosts
         - name: Deploy
           run: | 
             link=`curl -s -H "Authorization: Bearer $token" -H "Accept: application/vnd.github.v3.raw" https://api.github.com/repos/quicknotes-project/links/contents/link.txt`
@@ -36,4 +30,8 @@ jobs:
             hostport=$(echo ${url/$user@/} | cut -d/ -f1)
             host=$(echo $hostport | sed -e 's,:.*,,g')
             port=$(echo $hostport | sed -e 's,^.*:,:,g' -e 's,.*:\([0-9]*\).*,\1,g' -e 's,[^0-9],,g')
+            mkdir -p ~/.ssh
+            echo $key > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan $host >> ~/.ssh/known_hosts
             ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts pi@$host -p $port 'touch ~/test'
