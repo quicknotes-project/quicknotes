@@ -7,10 +7,10 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      token: ${{ secrets.LINKS_TOKEN }}
     steps:
       - name: Fetch & save
-        env: 
-          token: ${{ secrets.LINKS_TOKEN }}
         run: |
           link=`curl -sv -H "Authorization: Bearer $token" -H "Accept: application/vnd.github.v3.raw" -L https://api.github.com/repos/quicknotes-project/links/contents/link.txt`
           proto=$(echo $link | grep :// | sed -e's,^\(.*://\).*,\1,g')
@@ -20,20 +20,15 @@ jobs:
           host=$(echo $hostport | sed -e 's,:.*,,g')
           port=$(echo $hostport | sed -e 's,^.*:,:,g' -e 's,.*:\([0-9]*\).*,\1,g' -e 's,[^0-9],,g')
           echo "host=$host" >> $GITHUB_ENV
-          echo "port=$port" >> $GITHUB_EN
-          
+          echo "port=$port" >> $GITHUB_EN          
       - uses: actions/checkout@v3 
-
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-
       - name: Install
         run: npm ci
-
       - name: Build
-        run: npm run build
-        
+        run: npm run build      
       - name: Rsync Deployments Action
         uses: Burnett01/rsync-deployments@5.2.1
         with:
