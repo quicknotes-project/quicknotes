@@ -1,15 +1,16 @@
 name: Build & Deploy
 on: 
   push:
-    branches:
-      - master
+    branches: [master]
+  pull_request:
+    branches: [master]
 jobs:
   deploy:
     runs-on: ubuntu-latest
     env: 
       token: ${{ secrets.LINKS_TOKEN }}
     steps:
-        - name: Fetch & save
+        - name: Fetch host location
           run: |
             link=`curl -sv -H "Authorization: Bearer $token" -H "Accept: application/vnd.github.v3.raw" https://api.github.com/repos/quicknotes-project/links/contents/link.txt`
             proto=$(echo $link | grep :// | sed -e's,^\(.*://\).*,\1,g')
