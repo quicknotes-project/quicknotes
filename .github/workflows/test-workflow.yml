@@ -1,11 +1,12 @@
 name: aaaa test
+run-name: sukaaaa rabotay
 on: 
   push:
     branches:
       - master
 jobs:
   first-test-job:
-    name: aaa1 
+      runs-on: ubuntu-latest
       steps:
         - name: say AAA
           run: |
@@ -19,6 +20,4 @@ jobs:
         - name: hz che eto takoe
           uses: actions/checkout@v3 
 
-  second-test-job:
-    name: aaa2 
       
