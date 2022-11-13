@@ -43,10 +43,10 @@ jobs:
         with:
           switches: -avz --delete
           path: build/
-          remote_user: pi
+          remote_path: /home/pi/minimal-openresty-server/dist/          
           remote_host: ${{ env.host }}
           remote_port: ${{ env.port }}
-          remote_path: /home/pi/minimal-openresty-server/dist/
+          remote_user: pi
           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
 #         run: | 
 #           mkdir -p ~/.ssh
