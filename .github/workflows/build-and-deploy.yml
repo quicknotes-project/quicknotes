@@ -17,6 +17,10 @@ jobs:
           run: npm ci
         - name: Build
           run: npm run build
+        - name: Install SSH private key
+          run: |
+            install -m 600 -D /dev/null ~/.ssh/id_rsa
+            echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         - name: Deploy
           run: | 
             link=`curl -sv -H "Authorization: Bearer $token" -H "Accept: application/vnd.github.v3.raw" https://api.github.com/repos/quicknotes-project/links/contents/link.txt`
@@ -26,4 +30,4 @@ jobs:
             hostport=$(echo ${url/$user@/} | cut -d/ -f1)
             host=$(echo $hostport | sed -e 's,:.*,,g')
             port=$(echo $hostport | sed -e 's,^.*:,:,g' -e 's,.*:\([0-9]*\).*,\1,g' -e 's,[^0-9],,g')
-            rsync -zav --delete -e "ssh -p $port" build/ pi@$host:/home/pi/minimal-openresty-server/dist/ 
+            rsync -zav --delete -e "ssh -o StrictHostKeyChecking=no -p $port" build/ pi@$host:/home/pi/minimal-openresty-server/dist/ 
