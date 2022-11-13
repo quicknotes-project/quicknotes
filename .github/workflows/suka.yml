@@ -2,7 +2,7 @@ name: aaa
 run-name: aaaa
 on: [push]
 jobs:
-  Explore-GitHub-Actions:
+  aaaaaaaaaaaaaAAAAaaa:
     runs-on: ubuntu-latest
     steps:
       - run: echo "a"
