@@ -12,7 +12,7 @@ jobs:
         env: 
           token: ${{ secrets.LINKS_TOKEN }}
         run: |
-          link=`curl -sv -H "Authorization: Bearer $token" -H "Accept: application/vnd.github.v3.raw" https://api.github.com/repos/quicknotes-project/links/contents/link.txt`
+          link=`curl -sv -H "Authorization: Bearer $token" -H "Accept: application/vnd.github.v3.raw" -L https://api.github.com/repos/quicknotes-project/links/contents/link.txt`
           proto=$(echo $link | grep :// | sed -e's,^\(.*://\).*,\1,g')
           url=$(echo ${link/$proto/})
           user=$(echo $url | grep @ | cut -d@ -f1)
