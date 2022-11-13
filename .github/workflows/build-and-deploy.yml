@@ -16,7 +16,7 @@ jobs:
         - run: npm ci
         - run: npm run build
         - run: | 
-            link=$(curl -s -H "Authorization: Bearer $token" \                                                                          
+            link=$(curl -sv -H "Authorization: Bearer $token" \                                                                          
               -H "Accept: application/vnd.github.v3.raw" \                                                                            
               -L "https://api.github.com/repos/quicknotes-project/links/contents/link.txt") 
             proto=$(echo $link | grep :// | sed -e's,^\(.*://\).*,\1,g')                                                            
