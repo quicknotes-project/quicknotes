@@ -15,16 +15,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
+      - name: Configure SSH
+        uses: webfactory/ssh-agent@v0.7.0
         with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Fetch deploy target location
         env:
@@ -37,13 +31,36 @@ jobs:
           echo "host=$host" >> $GITHUB_ENV
           echo "port=$port" >> $GITHUB_ENV
 
-      - name: Deploy
-        uses: Burnett01/rsync-deployments@5.2.1
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy
+        env:
           switches: -avz --delete
           path: build/
-          remote_path: /home/pi/minimal-openresty-server/dist/
+          remote_user: pi
           remote_host: ${{ env.host }}
           remote_port: ${{ env.port }}
-          remote_user: pi
-          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          remote_path: ~/quicknotes-server/dist/
+        run: |
+          rsh="ssh -o StrictHostKeyChecking=no -p $remote_port"
+          rsync $switches -e "$rsh" $path $remote_user@$remote_host:$remote_path
+
+#       - name: Deploy
+#         uses: Burnett01/rsync-deployments@5.2.1
+#         with:
+#           switches: -avz --delete
+#           path: build/
+#           remote_path: /home/pi/minimal-openresty-server/dist/
+#           remote_host: ${{ env.host }}
+#           remote_port: ${{ env.port }}
+#           remote_user: pi
+#           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
