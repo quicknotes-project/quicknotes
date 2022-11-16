@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { NewNote } from './services/backend';
+import * as api from './services/backend';
 import { useAuth } from './contexts/AuthContext';
 import Tag from './components/Tag';
 import Modal from './components/Modal';
@@ -9,93 +11,12 @@ import ToolBar from './components/ToolBar';
 import SideBar from './components/SideBar';
 import SearchBar from './components/SearchBar';
 import InlineForm from './components/InlineForm';
-import { cn, generateRandomColor, renderIf, safeJSONParse } from './utils';
+import { cn, renderIf } from './utils';
 import { handleOption } from './utils/Optional';
 import './styles/App.css';
 
 const listNames = ['notes', 'tags'] as const;
-
 type ListNames = typeof listNames[number];
-
-interface TagData {
-  title: string;
-  color: string;
-}
-
-function NewTag(title: string, color: string): TagData {
-  return { title, color };
-}
-
-interface NoteData {
-  title: string;
-  text: string;
-  tags: TagData[];
-  createdAt: Date;
-  modifiedAt: Date;
-}
-
-function isNoteData(value: any): value is NoteData {
-  return (
-    'title' in value &&
-    'text' in value &&
-    'tags' in value &&
-    'createdAt' in value &&
-    'modifiedAt' in value
-  );
-}
-
-function isNoteDataArray(value: any): value is NoteData[] {
-  return Array.isArray(value) && value.every(isNoteData);
-}
-
-function NewNoteData(
-  title: string,
-  text: string,
-  tags?: TagData[],
-  createdAt?: Date,
-  modifiedAt?: Date
-): NoteData {
-  return {
-    title,
-    text,
-    tags: tags ?? [],
-    createdAt: createdAt ?? new Date(),
-    modifiedAt: modifiedAt ?? new Date(),
-  };
-}
-
-const mockTags = {
-  cool: NewTag('cool', '#AFBC9A'),
-  awesome: NewTag('awesome', '#8CACB6'),
-  wow: NewTag('wow', generateRandomColor()),
-  nice: NewTag('nice', generateRandomColor()),
-  smth: NewTag('smth', generateRandomColor()),
-} as const;
-
-const mockNotes: NoteData[] = [
-  NewNoteData(
-    'school',
-    'hahaha i love school '.repeat(48),
-    [mockTags.cool, mockTags.awesome],
-    new Date(Date.parse('2022-10-01')),
-    new Date(Date.parse('2022-10-01'))
-  ),
-  NewNoteData(
-    'foo',
-    'bar',
-    [mockTags.cool, mockTags.awesome, mockTags.awesome, mockTags.awesome],
-    new Date(Date.parse('2022-09-30')),
-    new Date(Date.parse('2022-09-30'))
-  ),
-  NewNoteData('something', 'something', [mockTags.nice, mockTags.wow]),
-  NewNoteData('', 'something'),
-  NewNoteData('something', 'something'),
-  NewNoteData('something', 'something'),
-  NewNoteData('something', 'something'),
-  NewNoteData('something', 'something'),
-  NewNoteData('something', 'something'),
-  NewNoteData('something', 'something'),
-];
 
 export default function App() {
   const { signout, fullname } = useAuth();
@@ -103,7 +24,7 @@ export default function App() {
   const [currentNoteID, setCurrentNoteID] = useState<number>(-1);
   const [activeListName, setActiveList] = useState<ListNames>('notes');
 
-  const [notes, setNotes] = useState<NoteData[]>(mockNotes);
+  const [notes, setNotes] = useState<api.NoteMetadata[]>([]);
 
   const [showSideBar, setShowSideBar] = useState(true);
 
@@ -116,19 +37,14 @@ export default function App() {
 
   // const [searchTags, setSearchTags] = useState<Tag[]>();
 
-  const tags = notes
-    .map((note) => note.tags)
-    .flat()
-    .filter(
-      // will be unnecessary
-      (tag, index, arr) =>
-        !arr.some((t, i) => tag.title === t.title && index > i)
-    );
+  const tags = notes.map((note) => note.tags).flat();
 
   const getCurrentNote = () =>
     currentNoteID < 0 ? null : notes[currentNoteID];
 
-  const updateCurrentNote = (transform: (prev: NoteData) => NoteData) => {
+  const updateCurrentNote = (
+    transform: (prev: api.NoteMetadata) => api.NoteMetadata
+  ) => {
     setNotes((state) => {
       const prev = state.find((_, i) => i === currentNoteID);
       return prev
@@ -137,7 +53,7 @@ export default function App() {
     });
   };
 
-  const prependNotes = (note: NoteData) => {
+  const prependNotes = (note: api.NoteMetadata) => {
     setNotes((state) => [note, ...state]);
   };
 
@@ -146,12 +62,9 @@ export default function App() {
   };
 
   const fetchData = async () => {
-    const res = await fetch('/notes');
+    const notesOption = await api.note.list();
 
-    if (res.status !== 200) return;
-
-    const raw = await res.json();
-    const notesOption = safeJSONParse(isNoteDataArray)(raw);
+    if (!notesOption.success) return;
 
     handleOption(setNotes, () => {})(notesOption);
   };
@@ -181,9 +94,7 @@ export default function App() {
           <button
             className="button"
             onClick={() => {
-              prependNotes(
-                NewNoteData('New note', '', [], new Date(), new Date())
-              );
+              prependNotes(NewNote('New note', '', [], new Date(), new Date()));
               setCurrentNoteID(0);
             }}
           >
@@ -342,7 +253,7 @@ export default function App() {
             </Note.Meta>
             <Note.Content>
               <Note.Content.Markdown
-                value={getCurrentNote()?.text ?? ''}
+                value={getCurrentNote()?.content ?? ''}
                 onChange={(value, e, state) => {
                   if (currentNoteID < 0) return;
                   updateCurrentNote((n) => ({

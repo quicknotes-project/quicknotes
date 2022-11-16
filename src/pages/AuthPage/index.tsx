@@ -12,6 +12,12 @@ enum AuthModes {
 type AuthMode = keyof typeof AuthModes;
 
 export default function AuthPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/';
+
+  const { tryLogin, tryRegister } = useAuth();
+
   const [authMode, setAuthMode] = useState<AuthMode>('Sign in');
 
   const [username, setUsername] = useState<string>('');
@@ -19,12 +25,6 @@ export default function AuthPage() {
   const [password, setPassword] = useState<string>('');
 
   const [touched, setTouched] = useState(false);
-
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || '/';
-
-  const { tryLogin, tryRegister } = useAuth();
 
   const fields = [
     {
@@ -71,11 +71,11 @@ export default function AuthPage() {
 
     const authFn =
       authMode === 'Sign in'
-        ? () => tryLogin(username, password)
-        : () => tryRegister(username, fullname, password);
+        ? () => tryLogin({username, password})
+        : () => tryRegister({username, fullname, password});
 
-    const res = await authFn();
-    if (!res) {
+    const authSuccess = await authFn();
+    if (!authSuccess) {
       return;
     }
 

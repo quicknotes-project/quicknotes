@@ -1,16 +1,14 @@
-/* eslint-disable react/jsx-no-constructed-context-values */
 import { createContext, useContext, useState } from 'react';
 import store from '../store';
+import * as api from '../services/backend';
 import { Maybe, Nestable } from '../types';
-import * as AuthService from '../services/AuthService';
 import { isSuccessful } from '../utils/Optional';
 
 interface AuthAPI {
   username: Maybe<string>;
   fullname: Maybe<string>;
-  // sessionID: Maybe<string>;
-  tryLogin: (username: string, password: string) => Promise<boolean>;
-  tryRegister: (username: string, fullname: string, password: string) => Promise<boolean>;
+  tryLogin: (creds: api.UserCreds) => Promise<boolean>;
+  tryRegister: (user: api.User) => Promise<boolean>;
   signout: () => void;
 }
 
@@ -41,40 +39,36 @@ export function AuthProvider({ children }: Nestable) {
     setFullname(null);
   };
 
-  const tryLogin = async (username: string, password: string) => {
-    const res = await AuthService.tryLogin(username, password);
-    if (isSuccessful(res)) {
-      saveUsername(username);
-      saveFullname(res.value.fullname);
-      // saveSessionID(res.value.sessionID);
+  const tryRegister = async (user: api.User) => {
+    const status = await api.register(user);
+    if (status === 200) {
+      saveUsername(user.username);
+      saveFullname(user.fullname);
     }
-    return res.success;
+    return status === 200;
   };
 
-  const tryRegister = async (
-    username: string,
-    fullname: string,
-    password: string
-  ) => {
-    const res = await AuthService.tryRegister(username, fullname, password);
-    if (isSuccessful(res)) {
-      saveUsername(username);
-      saveFullname(res.value.fullname);
-      // saveSessionID(res.value.sessionID);
+  const tryLogin = async (creds: api.UserCreds) => {
+    const status = await api.login(creds);
+    if (status === 200) {
+      const userOption = await api.user.fetch()
+      if (!isSuccessful(userOption)) {
+        return false
+      }
+      saveUsername(userOption.value.username);
+      saveFullname(userOption.value.fullname);
     }
-    return res.success;
+    return status === 200;
   };
 
   const signout = () => {
     unsetUsername();
     unsetFullname();
-    // unsetSessionID();
   };
 
   const values = {
     username,
     fullname,
-    // sessionID,
     tryLogin,
     tryRegister,
     signout,

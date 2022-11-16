@@ -32,3 +32,6 @@ export function handleOption<T, S, F>(
       : handleFail(option.message);
 }
 
+export function NewOption<T>(expr: boolean, value: T, message: string): Optional<T> {
+  return expr ? makeSuccessful(value) : makeFailed(message)
+}
