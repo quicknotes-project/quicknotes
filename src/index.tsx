@@ -25,6 +25,14 @@ root.render(
               </RequireAuth>
             }
           />
+          <Route
+            path="*"
+            element={
+              <RequireAuth>
+                <App />
+              </RequireAuth>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
