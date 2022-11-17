@@ -28,6 +28,7 @@ export interface InputProps
     Hidable {
   label: string;
   type?: React.HTMLInputTypeAttribute;
+  disabled?: boolean;
 }
 
 function InputGroup({
@@ -45,16 +46,18 @@ function InputGroup({
   invalidMessage,
   touched,
   hidden,
+  disabled,
 }: InputProps) {
   return (
-    <fieldset className={cn('input-group', { hidden }, className)}>
-      <legend>{label}</legend>
+    <div className={cn({ hidden }, className)}>
+      <label htmlFor={id || name || label}>{label}</label>
       <input
-        id={id}
-        name={name}
+        id={id || name || label}
+        name={name || label}
         type={type || 'text'}
         value={value}
         onChange={onChange}
+        disabled={disabled}
         className={cn(
           'input',
           { valid: !!valid, invalid: !!invalid },
@@ -66,7 +69,7 @@ function InputGroup({
       {touched && invalid && (
         <div className="invalid-message">{invalidMessage}</div>
       )}
-    </fieldset>
+    </div>
   );
 }
 

@@ -4,15 +4,12 @@
   left: 50%;
   translate: -50% 0;
   padding: 1em 1.5em;
-  background-color: var(--bg-color);
-  box-shadow: var(--box-shadow);
-}
-
-.auth-form {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: .5em;
+  border: 3px solid var(--medium);
+  border-radius: .3em;
 }
 
 .auth-header {
@@ -34,17 +31,49 @@
   font-style: normal;
 }
 
-.auth-body {
+.auth-form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: .5em;
+  gap: 1em;
 }
 
-input.auth-input-group {
+.auth-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: .3em;
+}
+
+.auth-input-group label {
+  display: none;
+}
+
+.auth-input-group input {
   width: 14em;
+  border: 2px solid var(--medium);
+  border-radius: .2em;
+  background-color: var(--dark);
+  color: var(--color);
 }
 
-.auth-footer {
-  margin-top: .5em;
+.auth-input-group .invalid-message {
+  font: italic .8rem serif;
+  color: red;
 }
+
+.auth-status {
+  font: .9rem sans-serif;
+  color: var(--lightest)
+}
+
+.error-message {
+  font: italic .9rem serif;
+  color: red;
+}
+
+/* .error-message {
+  font-family: serif;
+  font-style: normal;
+  background-color: rgb(174, 42, 42, .5);
+  color: white
+} */

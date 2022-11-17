@@ -1,12 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import AuthPage from './pages/AuthPage';
 import App from './App';
 import RequireAuth from './components/RequireAuth';
 import { AuthProvider } from './contexts/AuthContext';
 import reportWebVitals from './reportWebVitals';
-import './styles/utility.css';
 import './styles/index.css';
 
 const root = ReactDOM.createRoot(
@@ -18,9 +17,8 @@ root.render(
       <BrowserRouter>
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
-          <Route path="/" element={<Navigate to="/notes" />} />
           <Route
-            path="/notes"
+            path="/"
             element={
               <RequireAuth>
                 <App />

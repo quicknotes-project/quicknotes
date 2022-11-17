@@ -1,3 +1,45 @@
+/*    ----    Global config    ----    */
+
+:root {
+  --bg-color: #ddd;
+  --accent-bg-color: #666;
+  --dark: rgb(24, 8, 35);
+  --medium: rgb(80, 25, 117);
+  --light: rgb(136, 95, 163);
+  --lighter: rgb(181, 149, 203);
+  --lightest: rgb(221, 202, 234);
+  
+
+  --color: white;
+  --ph-color: gray;
+  --accent-color: white;
+  --link-color: rgb(247, 221, 136);
+  --link-hover-color: white;
+  --accent-link-color: #84bef8;
+  --accent-link-hover-color: white;
+
+  --border-wide: 3px;
+  --border-thin: 1px;
+
+  --border-color: #e3e3e3;
+
+  --box-shadow-color: rgba(0, 0, 0, 0.5);
+  --box-shadow: .4em .4em var(--box-shadow-color);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color: var(--color);
+  font-size: 1.1rem;
+}
+
+/*    ----    Extraneous config    ----    */
+
 body {
   height: 100vh;
   margin: 0;
@@ -8,5 +50,143 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: var(--wallpaper);
+  background-color: var(--dark);
+}
+
+/*    ----    UI config    ---    */
+
+h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.header {
+  height: 3em;
+}
+
+.button {
+  cursor: pointer;
+  width: min-content;
+  padding-block: .5em;
+  padding-inline: 1em;
+  border: 2px solid var(--medium);
+  border-radius: 9999px;
+  font-size: .9rem;
+  background-color: var(--medium);
+  color: var(--color)
+}
+
+.button:hover {
+  border-color: var(--light);
+  background-color: var(--light);
+}
+
+.button:active {
+  border-color: var(--link-color);
+  background-color: var(--link-color);
+  color: #333;
+}
+
+.button:disabled {
+  cursor: default;
+  border-color: var(gray) !important;
+  background-color: var(gray) !important;
+}
+
+.input {
+  font-size: 1rem;
+}
+
+.input:focus,
+.button:focus {
+  outline: none;
+  border-color: var(--link-color);
+}
+
+.pill {
+  padding: .2em .3em;
+  border-radius: .3em;
+  font-family: sans-serif;
+  color: white;
+}
+
+.placeholder {
+  color: gray;
+}
+
+.slide-right {
+  position: absolute;
+  height: 100%;
+  translate: -100% 0;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.hidden {
+  display: none;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.a-i-center {
+  align-items: center;
+}
+
+.j-c-center {
+  justify-content: center;
+}
+
+.link {
+  text-decoration: underline;
+  color: var(--link-color);
+}
+
+.link:hover {
+  cursor: pointer;
+  color: var(--link-hover-color);
+}
+
+.link.plain {
+  color: inherit;
+}
+
+.link.accent {
+  color: var(--accent-link-color);
+}
+
+.link.accent:hover {
+  color: var(--accent-link-hover-color);
+}
+
+input.editing:focus {
+  outline: initial;
+}
+
+.button.red {
+  background-color: red;
+  border-top-color: #ffa0a0;
+  border-left-color: #fe7777;
+  border-bottom-color: #fe7777;
+  border-right-color: #ffa0a0;
+  color: white;
+}
+
+.button.edit {
+  margin: 0;
+  padding: 0;
+  width: 1.6em;
+  aspect-ratio: 1/1;
+  border-radius: .3em;
+  line-height: 1.4em;
+}
+
+.button.edit.active {
+  border-style: inset;
+  background-color: var(--accent-bg-color);
+  color: var(--accent-color);
 }

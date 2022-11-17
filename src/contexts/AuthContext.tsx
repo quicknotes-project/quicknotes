@@ -1,69 +1,58 @@
-import { createContext, useContext, useState } from 'react';
-import store from '../store';
+import { createContext, useContext } from 'react';
+import { useStorage } from '../hooks/use-storage';
 import * as api from '../services/backend';
 import { Maybe, Nestable } from '../types';
-import { isSuccessful } from '../utils/Optional';
+import { makeSuccessful, Optional } from '../utils/Optional';
 
 interface AuthAPI {
   username: Maybe<string>;
   fullname: Maybe<string>;
-  tryLogin: (creds: api.UserCreds) => Promise<boolean>;
-  tryRegister: (user: api.User) => Promise<boolean>;
+  tryLogin: (creds: api.UserCreds) => Promise<Optional<void>>;
+  tryRegister: (user: api.User) => Promise<Optional<void>>;
   signout: () => void;
 }
 
 const AuthContext = createContext<AuthAPI | null>(null);
 
 export function AuthProvider({ children }: Nestable) {
-  const [username, setUser] = useState(store.get('username'));
-
-  const saveUsername = (value: string) => {
-    store.set('username', value);
-    setUser(value);
-  };
-
-  const unsetUsername = () => {
-    store.remove('username');
-    setUser(null);
-  };
-
-  const [fullname, setFullname] = useState(store.get('fullname'));
-
-  const saveFullname = (value: string) => {
-    store.set('fullname', value);
-    setFullname(value);
-  };
-
-  const unsetFullname = () => {
-    store.remove('fullname');
-    setFullname(null);
-  };
+  const [username, setUsername] = useStorage<Maybe<string>>('username', null);
+  const [fullname, setFullname] = useStorage<Maybe<string>>('fullname', null);
 
   const tryRegister = async (user: api.User) => {
-    const status = await api.register(user);
-    if (status === 200) {
-      saveUsername(user.username);
-      saveFullname(user.fullname);
+    const res = await api.register(user);
+
+    if (!res.success) {
+      return res;
     }
-    return status === 200;
+
+    setUsername(user.username);
+    setFullname(user.fullname);
+
+    return makeSuccessful(undefined);
   };
 
   const tryLogin = async (creds: api.UserCreds) => {
-    const status = await api.login(creds);
-    if (status === 200) {
-      const userOption = await api.user.fetch()
-      if (!isSuccessful(userOption)) {
-        return false
-      }
-      saveUsername(userOption.value.username);
-      saveFullname(userOption.value.fullname);
+    const res = await api.login(creds);
+
+    if (!res.success) {
+      return res;
     }
-    return status === 200;
+
+    const userOption = await api.user.fetch();
+
+    if (!userOption.success) {
+      return userOption;
+    }
+
+    setUsername(userOption.value.username);
+    setFullname(userOption.value.fullname);
+
+    return makeSuccessful(undefined);
   };
 
   const signout = () => {
-    unsetUsername();
-    unsetFullname();
+    setUsername(null);
+    setFullname(null);
   };
 
   const values = {

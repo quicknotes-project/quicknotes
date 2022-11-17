@@ -1,15 +1,14 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import Form from '../../components/Form';
 import './AuthPage.css';
+import { Maybe } from '../../types';
+import { cn, renderIf } from '../../utils';
 
-enum AuthModes {
-  'Sign in',
-  'Sign up',
-}
+const authModes = ['Sign in', 'Sign up'] as const;
 
-type AuthMode = keyof typeof AuthModes;
+type AuthMode = typeof authModes[number];
 
 export default function AuthPage() {
   const navigate = useNavigate();
@@ -25,6 +24,8 @@ export default function AuthPage() {
   const [password, setPassword] = useState<string>('');
 
   const [touched, setTouched] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<Maybe<string>>(null);
 
   const fields = [
     {
@@ -62,20 +63,26 @@ export default function AuthPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     setTouched(true);
-    console.log({ username, fullname, password });
+    setLoading(true);
+    setErrorMessage(null);
 
     if (fields.some((field) => field.required && field.invalid)) {
+      setLoading(false);
       return;
     }
 
-    const authFn =
+    const authAction =
       authMode === 'Sign in'
-        ? () => tryLogin({username, password})
-        : () => tryRegister({username, fullname, password});
+        ? () => tryLogin({ username, password })
+        : () => tryRegister({ username, fullname, password });
 
-    const authSuccess = await authFn();
-    if (!authSuccess) {
+    const res = await authAction();
+
+    if (!res.success) {
+      setErrorMessage(res.message);
+      setLoading(false);
       return;
     }
 
@@ -84,51 +91,60 @@ export default function AuthPage() {
 
   return (
     <main className="auth-container">
-      <form className="auth-form" onSubmit={handleSubmit}>
-        <div className="auth-header">
-          <h3 className="auth-title">{authMode}</h3>
+      <div className="auth-header">
+        <h3 className="auth-title">{authMode}</h3>
 
-          <div className="auth-subtitle">
-            Not registered yet?{' '}
-            <div
-              className="auth-switch link"
-              onClick={() =>
-                setAuthMode((state) =>
-                  state === 'Sign in' ? 'Sign up' : 'Sign in'
-                )
-              }
-            >
-              {authMode === 'Sign in' ? 'Sign up' : 'Sign in'}
-            </div>
+        <div className="auth-subtitle">
+          Not registered yet?{' '}
+          <div
+            className="auth-switch link"
+            onClick={() => {
+              setTouched(false);
+              setAuthMode((state) =>
+                state === 'Sign in' ? 'Sign up' : 'Sign in'
+              );
+            }}
+          >
+            {authMode === 'Sign in' ? 'Sign up' : 'Sign in'}
           </div>
         </div>
+      </div>
 
-        <div className="auth-body">
-          {fields.map((field, index) => (
-            <Form.InputGroup
-              key={`auth-field-${index}`}
-              label={field.label}
-              value={field.value}
-              onChange={(e) => {
-                setTouched(false);
-                field.onChange(e.target.value);
-              }}
-              id={field.name}
-              name={field.name}
-              type={field.type}
-              className="auth-input-group"
-              hidden={field.name === 'fullname' && authMode === 'Sign in'}
-              invalid={field.invalid}
-              touched={touched}
-              invalidMessage={field.invalidMessage}
-              placeholder={field.placeholder}
-            />
-          ))}
-        </div>
+      <form className="auth-form" onSubmit={handleSubmit}>
+        {fields.map((field, index) => (
+          <Form.InputGroup
+            key={`auth-field-${index}`}
+            label={field.label}
+            value={field.value}
+            onChange={(e) => {
+              setTouched(false);
+              field.onChange(e.target.value);
+            }}
+            id={field.name}
+            name={field.name}
+            type={field.type}
+            className="auth-input-group"
+            disabled={loading}
+            hidden={field.name === 'fullname' && authMode === 'Sign in'}
+            invalid={field.invalid}
+            touched={touched}
+            invalidMessage={field.invalidMessage}
+            placeholder={field.placeholder}
+          />
+        ))}
 
-        <div className="auth-footer">
-          <button className="button" type="submit">Submit</button>
-        </div>
+        {renderIf(
+          touched && (loading || !!errorMessage),
+          <div
+            className={cn('auth-status', { 'error-message': !!errorMessage })}
+          >
+            {errorMessage || 'loading...'}
+          </div>
+        )}
+
+        <button className="button" disabled={loading}>
+          Submit
+        </button>
       </form>
     </main>
   );
