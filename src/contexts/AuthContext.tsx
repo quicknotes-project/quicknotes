@@ -64,7 +64,8 @@ export function AuthProvider({ children }: Nestable) {
     return makeSuccessful(undefined);
   };
 
-  const signout = () => {
+  const logout = async () => {
+    await api.logout();
     setUsername(null);
     setFullname(null);
   };
@@ -75,7 +76,7 @@ export function AuthProvider({ children }: Nestable) {
     tryFetch,
     tryLogin,
     tryRegister,
-    signout,
+    signout: logout,
   };
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;

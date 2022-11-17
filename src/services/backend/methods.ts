@@ -40,6 +40,16 @@ export async function login(creds: UserCreds): Promise<Optional<void>> {
   }
 }
 
+export async function logout(): Promise<Optional<void>> {
+  const res = await fetch(routes.logout(), { headers: { 'ngrok-skip-browser-warning': 'skip' } })
+  switch (res.status) {
+    case 200:
+      return makeSuccessful(undefined);
+    default:
+      return makeFailed(`Unknown error (status code ${res.status})`)
+  }
+}
+
 export const user: {
   fetch: () => Promise<Optional<UserData>>;
   update: (updates: Partial<User>) => Promise<Optional<void>>
