@@ -6,7 +6,7 @@ import App from './App';
 import RequireAuth from './components/RequireAuth';
 import { AuthProvider } from './contexts/AuthContext';
 import reportWebVitals from './reportWebVitals';
-import './styles/index.css';
+import './index.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

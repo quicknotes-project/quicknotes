@@ -14,7 +14,7 @@ interface MarkdownProps
     state?: ContextStore
   ) => void;
 }
-export function Markdown({
+export default function Markdown({
   value,
   onChange,
   onContextMenu,
@@ -26,11 +26,7 @@ export function Markdown({
     setEditorHeight(wrapperRef.current?.scrollHeight + 'px');
   }, []);
   return (
-    <div
-      ref={wrapperRef}
-      className="markdown-wrapper"
-      data-color-mode="light"
-    >
+    <div ref={wrapperRef} className="markdown-wrapper" data-color-mode="light">
       <MDEditor
         value={value}
         onChange={onChange}
