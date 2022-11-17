@@ -7,8 +7,9 @@ import { makeSuccessful, Optional } from '../utils/Optional';
 interface AuthAPI {
   username: Maybe<string>;
   fullname: Maybe<string>;
-  tryLogin: (creds: api.UserCreds) => Promise<Optional<void>>;
+  tryFetch: () => Promise<Optional<void>>;
   tryRegister: (user: api.User) => Promise<Optional<void>>;
+  tryLogin: (creds: api.UserCreds) => Promise<Optional<void>>;
   signout: () => void;
 }
 
@@ -17,6 +18,19 @@ const AuthContext = createContext<AuthAPI | null>(null);
 export function AuthProvider({ children }: Nestable) {
   const [username, setUsername] = useStorage<Maybe<string>>('username', null);
   const [fullname, setFullname] = useStorage<Maybe<string>>('fullname', null);
+
+  const tryFetch = async () => {
+    const userOption = await api.user.fetch();
+
+    if (!userOption.success) {
+      return userOption;
+    }
+
+    setUsername(userOption.value.username);
+    setFullname(userOption.value.fullname);
+
+    return makeSuccessful(undefined);
+  };
 
   const tryRegister = async (user: api.User) => {
     const res = await api.register(user);
@@ -58,6 +72,7 @@ export function AuthProvider({ children }: Nestable) {
   const values = {
     username,
     fullname,
+    tryFetch,
     tryLogin,
     tryRegister,
     signout,

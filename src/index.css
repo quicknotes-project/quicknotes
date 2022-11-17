@@ -25,6 +25,9 @@
 
   --box-shadow-color: rgba(0, 0, 0, 0.5);
   --box-shadow: .4em .4em var(--box-shadow-color);
+
+  --ff-serif: 'Source Serif Pro', serif;
+  --ff-sans: 'Source Sans Pro', sans-serif;
 }
 
 *,
@@ -36,6 +39,7 @@
 html {
   color: var(--color);
   font-size: 1.1rem;
+  font-family: var(--ff-sans);
 }
 
 /*    ----    Extraneous config    ----    */
@@ -59,10 +63,6 @@ h3 {
   margin: 0;
   font-size: 1.2rem;
   text-align: center;
-}
-
-.header {
-  height: 3em;
 }
 
 .button {
