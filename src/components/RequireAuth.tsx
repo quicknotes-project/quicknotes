@@ -13,6 +13,8 @@ export default function RequireAuth({ children }: StrictNestable) {
   const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
+    setLoaded(false);
+    setAuthed(false);
     if (username !== null) {
       setLoaded(true);
       setAuthed(true);
@@ -22,12 +24,11 @@ export default function RequireAuth({ children }: StrictNestable) {
       setLoaded(true);
       setAuthed(res.success);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [username, tryFetch]);
 
   return renderIf(
     !loaded,
-    <div>loading...</div>,
+    <div />,
     renderIf(
       authed,
       children,

@@ -3,6 +3,8 @@
   top: 7em;
   left: 50%;
   translate: -50% 0;
+  width: min-content;
+  height: min-content;
   padding: 1em 1.5em;
   display: flex;
   flex-direction: column;

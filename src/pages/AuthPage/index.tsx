@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import Form from '../../components/Form';
-import './AuthPage.css';
-import { Maybe } from '../../types';
 import { cn, renderIf } from '../../utils';
+import { Maybe } from '../../types';
+import './AuthPage.css';
 
 const authModes = ['Sign in', 'Sign up'] as const;
 
