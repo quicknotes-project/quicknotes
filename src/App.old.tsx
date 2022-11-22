@@ -19,7 +19,7 @@ const listNames = ['notes', 'tags'] as const;
 type ListNames = typeof listNames[number];
 
 export default function App() {
-  const { signout, fullname } = useAuth();
+  const { logout, fullname } = useAuth();
 
   const [currentNoteID, setCurrentNoteID] = useState<number>(-1);
   const [activeListName, setActiveList] = useState<ListNames>('notes');
@@ -311,7 +311,7 @@ export default function App() {
             <button
               className="button"
               onClick={() => {
-                signout();
+                logout();
               }}
             >
               Logout

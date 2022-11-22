@@ -1,29 +1,58 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from './contexts/AuthContext';
-import { note, NoteMetadata } from './services/backend';
 import { Allotment } from 'allotment';
 import Markdown from './components/Markdown';
-import './App.css';
+import { useAuth } from './contexts/AuthContext';
+import * as api from './services/backend';
+import { cn } from './utils';
+import { Maybe } from './types';
 import 'allotment/dist/style.css';
+import './App.css';
+
+type NoteState = '' | 'loading...' | 'saving...' | 'saved!' | 'error';
 
 export default function App() {
-  const { fullname, signout } = useAuth();
+  const { fullname, logout } = useAuth();
 
-  const [notes, setNotes] = useState<NoteMetadata[]>([]);
+  const [notes, setNotes] = useState<api.NoteMetadata[]>([]);
 
-  const [content, setContent] = useState<string | undefined>('');
+  const [currentNoteID, setCurrentNoteID] = useState<Maybe<string>>(null);
+
+  const [content, setContent] = useState<string>('');
+
+  const [currentNoteState, setCurrentNoteState] = useState<NoteState>('');
 
   const [sizes, setSizes] = useState([3, 7]);
 
+  const saveContent = async () => {
+    setCurrentNoteState('saving...');
+    if (!currentNoteID) {
+      console.log('tried to save note but no note selected!');
+      // handle error?
+      return;
+    }
+    const res = await api.note.update(currentNoteID, { content });
+    if (!res.success) {
+      console.log('could not update note content!');
+      setCurrentNoteState('error');
+      // handle error?
+      return;
+    }
+    setCurrentNoteState('saved!');
+  };
+
+  const fetchNotes = async () => {
+    const res = await api.note.list();
+    console.log(res);
+    if (!res.success) {
+      console.log('could note fetch notes!');
+      // handle error
+      return;
+    }
+    setNotes(res.value);
+  };
+
   useEffect(() => {
-    (async () => {
-      const res = await note.list();
-      if (!res.success) {
-        // handle error
-        return;
-      }
-      setNotes(res.value);
-    })();
+    fetchNotes();
   }, []);
 
   return (
@@ -33,7 +62,7 @@ export default function App() {
           <h3 className="logo">Quicknotes</h3>
           <div>
             logged in as {fullname}{' '}
-            <button className="button" onClick={signout}>
+            <button className="button" onClick={logout}>
               logout
             </button>
           </div>
@@ -50,15 +79,39 @@ export default function App() {
                   <button className="button">+</button>
                 </div>
                 {notes.map((note) => (
-                  <li>{note.title}</li>
+                  <li
+                    key={note.noteID}
+                    className={cn({
+                      active: note.noteID === currentNoteID,
+                    })}
+                    data-state={currentNoteState}
+                    onClick={async () => {
+                      setCurrentNoteID(note.noteID);
+                      setCurrentNoteState('loading...');
+                      // setLoadingContent(true);
+                      const res = await api.note.fetch(note.noteID);
+                      // setLoadingContent(false);
+                      setCurrentNoteState('');
+                      console.log(res);
+                      if (!res.success) {
+                        // handle error
+                        return;
+                      }
+                      setContent(res.value.content);
+                    }}
+                  >
+                    {note.title}
+                  </li>
                 ))}
               </ul>
             </Allotment.Pane>
 
-            <Markdown
-              value={content || ''}
-              onChange={(value) => setContent(value)}
-            />
+            <Allotment.Pane minSize={200}>
+              <Markdown
+                value={content || ''}
+                onChange={(value) => setContent(value ?? '')}
+              />
+            </Allotment.Pane>
           </Allotment>
         </div>
       </main>

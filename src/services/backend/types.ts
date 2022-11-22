@@ -37,8 +37,7 @@ export interface Note {
 export function isNote(value: any): value is Note {
   return typeof value === 'object' &&
     'title' in value &&
-    'text' in value &&
-    'tags' in value &&
+    // 'tags' in value &&
     'createdAt' in value &&
     'modifiedAt' in value &&
     'content' in value
@@ -64,9 +63,11 @@ export type NoteMetadata = Omit<Note, 'content'>
 
 export function isNoteMetadata(value: any): value is NoteMetadata {
   return typeof value === 'object' &&
+    'noteID' in value &&
     'title' in value &&
-    'text' in value &&
-    'tags' in value &&
+    // 'tags' in value &&
     'createdAt' in value &&
     'modifiedAt' in value
 }
+
+export type NoteUpdate = Partial<Pick<Note, 'title' | 'tags' | 'content'>>
