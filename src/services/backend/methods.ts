@@ -1,6 +1,6 @@
 import routes from "../../config/routes";
 import { makeFailed, makeSuccessful, Optional } from "../../utils/Optional";
-import { isNoteMetadata, isUserData, NoteMetadata, User, UserCreds, UserData } from "./types";
+import { isNote, isNoteMetadata, isUserData, Note, NoteMetadata, NoteUpdate, User, UserCreds, UserData } from "./types";
 
 export async function register(user: User): Promise<Optional<void>> {
   const res = await fetch(routes.register(), {
@@ -63,7 +63,7 @@ export const user: {
     })
 
     if (res.status === 401) {
-      return makeFailed('Not logged in')
+      return makeFailed('Not authorized')
     }
 
     const user = await res.json()
@@ -93,8 +93,57 @@ export const user: {
 }
 
 export const note: {
+  fetch: (noteID: string) => Promise<Optional<Note>>
+  update: (noteID: string, updates: NoteUpdate) => Promise<Optional<void>>
   list: () => Promise<Optional<Array<NoteMetadata>>>
 } = {
+  fetch: async (noteID: string) => {
+    const res = await fetch(routes.note(noteID), {
+      headers: {
+        'ngrok-skip-browser-warning': 'skip',
+      }
+    })
+
+    if (!res.ok) {
+      switch (res.status) {
+        case 401:
+          return makeFailed('Not authorized')
+        default:
+          return makeFailed(`Unknown error (status code ${res.status})`)
+      }
+    }
+
+    const note = await res.json()
+
+    if (!isNote(note)) {
+      return makeFailed('Server returned malformed data')
+    }
+
+    return makeSuccessful(note)
+  },
+
+  update: async (noteID: string, updates: Partial<Omit<Note, 'noteID'>>) => {
+    const res = await fetch(routes.note(noteID), {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'skip',
+      },
+      body: JSON.stringify(updates)
+    })
+
+    if (!res.ok) {
+      switch (res.status) {
+        case 401:
+          return makeFailed('Not authorized')
+        default:
+          return makeFailed(`Unknown error (status code ${res.status})`)
+      }
+    }
+
+    return makeSuccessful(undefined)
+  },
+
   list: async () => {
     const res = await fetch(routes.notes(), {
       headers: {
@@ -115,7 +164,8 @@ export const note: {
     const notes = await res.json()
 
     if (!Array.isArray(notes) || !notes.every(isNoteMetadata)) {
-      return makeFailed('Server returned malformed data')
+      console.log(notes)
+      return makeFailed(`Server returned malformed data`)
     }
 
     return makeSuccessful(notes)

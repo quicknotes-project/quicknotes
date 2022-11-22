@@ -6,7 +6,7 @@ const routes = {
   logout: () => `${prefix}/logout`,
   user: () => `${prefix}/user`,
   notes: () => `${prefix}/notes`,
-  note: () => `${prefix}/note`,
+  note: (noteID: string) => `${prefix}/note?${new URLSearchParams({ noteID }).toString()}`,
 }
 
 export default routes

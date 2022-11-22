@@ -10,7 +10,7 @@ interface AuthAPI {
   tryFetch: () => Promise<Optional<void>>;
   tryRegister: (user: api.User) => Promise<Optional<void>>;
   tryLogin: (creds: api.UserCreds) => Promise<Optional<void>>;
-  signout: () => void;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthAPI | null>(null);
@@ -76,7 +76,7 @@ export function AuthProvider({ children }: Nestable) {
     tryFetch,
     tryLogin,
     tryRegister,
-    signout: logout,
+    logout,
   };
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;

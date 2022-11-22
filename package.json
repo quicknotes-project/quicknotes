@@ -2,7 +2,7 @@
   "name": "quicknotes",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://3a23-212-45-15-105.eu.ngrok.io",
+  "proxy": "https://b6b9-212-45-15-105.eu.ngrok.io",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
