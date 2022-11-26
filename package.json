@@ -2,7 +2,7 @@
   "name": "quicknotes",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://b6b9-212-45-15-105.eu.ngrok.io",
+  "proxy": "https://d08e-212-45-15-105.eu.ngrok.io",
   "dependencies": {
     "@types/node": "^16.11.65",
     "@types/react": "^18.0.21",
@@ -21,9 +21,8 @@
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
-    "serve": "vite preview",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "preview": "vite preview",
+    "deploy": "./deploy.sh"
   },
   "eslintConfig": {
     "extends": [
