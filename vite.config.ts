@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv, ServerOptions, UserConfig } from 'vite';
+import { defineConfig, loadEnv, UserConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 import svgrPlugin from 'vite-plugin-svgr';
@@ -8,31 +8,14 @@ import * as ngrokAPI from './ngrok-api';
 export default defineConfig(async ({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd(), '') }
 
-  const config: UserConfig & { server: ServerOptions } = {
+  const config: UserConfig = {
     plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
-    server: {
-      open: true,
-      port: 8000
-    },
-    build: {
-      sourcemap: false,
-      rollupOptions: {
-        output: {
-          manualChunks: (id) => {
-            if (id.includes('node_modules')) {
-              return 'vendor'
-            }
-            return id.split('/')[id.length - 1]
-          }
-        }
-      }
-    }
   }
 
   switch (mode) {
     case 'development': {
       const token = process.env.GET_LINKS_TOKEN
-      
+
       const res = await fetch("https://api.ngrok.com/tunnels", {
         headers: {
           "authorization": `Bearer ${token}`,
@@ -46,19 +29,48 @@ export default defineConfig(async ({ mode }) => {
       const tunnel = tunnels.find((t) => t.forwards_to === 'http://localhost:8000')
 
       if (!tunnel) {
-        return config
+        return {
+          ...config,
+          server: {
+            open: true,
+            port: 8000
+          },
+        }
       }
 
-      const proxy = {
-        "/api": tunnel.public_url
+      return {
+        ...config,
+        server: {
+          open: true,
+          port: 8000,
+          proxy: {
+            "/api": tunnel.public_url
+          }
+        },
       }
-
-      config.server.proxy = proxy
-      config.base = process.env.BASE_URL
-
-      return config
     }
+    case 'preview':
+      return {
+        ...config,
+        base: process.env.BASE_URL
+      }
     case 'production':
+      return {
+        ...config,
+        build: {
+          sourcemap: false,
+          rollupOptions: {
+            output: {
+              manualChunks: (id) => {
+                if (id.includes('node_modules')) {
+                  return 'vendor'
+                }
+                return id.split('/')[id.length - 1]
+              }
+            }
+          }
+        }
+      }
     default:
       return config;
   }

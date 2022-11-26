@@ -21,8 +21,7 @@
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
-    "build-dev": "tsc && vite build --mode development",
-    "deploy": "./deploy.sh"
+    "build-preview": "tsc && vite build --mode preview"
   },
   "eslintConfig": {
     "extends": [
