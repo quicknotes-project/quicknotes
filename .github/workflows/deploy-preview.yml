@@ -48,7 +48,7 @@ jobs:
       - name: Deploy
         env:
           switches: -avz --delete
-          path: build/
+          path: dist/
           remote_user: pi
           remote_host: ${{ env.host }}
           remote_port: ${{ env.port }}
