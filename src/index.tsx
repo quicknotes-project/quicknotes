@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import AuthPage from './pages/AuthPage';
-import App from './App';
 import RequireAuth from './components/RequireAuth';
 import { AuthProvider } from './contexts/AuthContext';
 import './index.css';
+
+const AuthPage = React.lazy(() => import('./pages/AuthPage'));
+const App = React.lazy(() => import('./App'));
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

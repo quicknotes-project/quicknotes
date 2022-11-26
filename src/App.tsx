@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useState } from 'react';
-import { Allotment } from 'allotment';
-import Markdown from './components/Markdown';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from './contexts/AuthContext';
 import * as api from './services/backend';
 import { cn } from './utils';
 import { Maybe } from './types';
 import 'allotment/dist/style.css';
 import './App.css';
+
+import { Allotment } from 'allotment';
+
+const Markdown = React.lazy(() => import('./components/Markdown'));
 
 type NoteState = '' | 'loading...' | 'saving...' | 'saved!' | 'error';
 

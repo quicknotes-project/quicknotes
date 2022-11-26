@@ -1,10 +1,10 @@
-name: Deploy preview
+name: Deploy dev
 
 on:
   push:
-    branches: [preview]
+    branches: [dev]
   pull_request:
-    branches: [preview]
+    branches: [dev]
 
 jobs:
   deploy:
@@ -39,11 +39,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Configure
-        run: echo "PUBLIC_URL=/preview" > .env
-
       - name: Build
-        run: npm run build
+        run: npm run build-dev
 
       - name: Deploy
         env:

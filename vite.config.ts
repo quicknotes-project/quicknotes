@@ -14,12 +14,25 @@ export default defineConfig(async ({ mode }) => {
       open: true,
       port: 8000
     },
+    build: {
+      sourcemap: false,
+      rollupOptions: {
+        output: {
+          manualChunks: (id) => {
+            if (id.includes('node_modules')) {
+              return 'vendor'
+            }
+            return id.split('/')[id.length - 1]
+          }
+        }
+      }
+    }
   }
 
   switch (mode) {
     case 'development': {
       const token = process.env.GET_LINKS_TOKEN
-      console.log(token)
+      
       const res = await fetch("https://api.ngrok.com/tunnels", {
         headers: {
           "authorization": `Bearer ${token}`,
@@ -39,7 +52,9 @@ export default defineConfig(async ({ mode }) => {
       const proxy = {
         "/api": tunnel.public_url
       }
+
       config.server.proxy = proxy
+      config.base = process.env.BASE_URL
 
       return config
     }
