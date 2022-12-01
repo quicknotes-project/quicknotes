@@ -6,7 +6,9 @@ const routes = {
   logout: () => `${prefix}/logout`,
   user: () => `${prefix}/user`,
   notes: () => `${prefix}/notes`,
-  note: (noteID: string) => `${prefix}/note?${new URLSearchParams({ noteID }).toString()}`,
+  note: (noteID?: string) => noteID
+    ? `${prefix}/note?${new URLSearchParams({ noteID }).toString()}`
+    : `${prefix}/note`, // при вызове без параметра noteID 
 }
 
 export default routes

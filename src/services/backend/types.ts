@@ -28,8 +28,8 @@ export function isTag(value: any): value is Tag {
 export interface Note {
   noteID: string,
   title: string,
-  createdAt: Date,
-  modifiedAt: Date,
+  createdAt: string,
+  modifiedAt: string,
   tags: Tag[],
   content: string
 }
@@ -43,19 +43,23 @@ export function isNote(value: any): value is Note {
     'content' in value
 }
 
+function dateToString(date: Date): string {
+  return `${date.getFullYear}-${date.getMonth}-${date.getDate} ${date.getHours}:${date.getMinutes}:${date.getSeconds}`
+}
+
 export function NewNote(
   title: string,
   content: string,
   tags?: Tag[],
-  createdAt?: Date,
-  modifiedAt?: Date
+  createdAt?: string,
+  modifiedAt?: string
 ): Omit<Note, 'noteID'> {
   return {
     title,
     content,
     tags: tags ?? [],
-    createdAt: createdAt ?? new Date(),
-    modifiedAt: modifiedAt ?? new Date(),
+    createdAt: createdAt ?? dateToString(new Date()),
+    modifiedAt: modifiedAt ?? dateToString(new Date()),
   };
 }
 
@@ -71,3 +75,13 @@ export function isNoteMetadata(value: any): value is NoteMetadata {
 }
 
 export type NoteUpdate = Partial<Pick<Note, 'title' | 'tags' | 'content'>>
+
+export type EmptyNote = Omit<Note, 'content' | 'tags'>
+
+export function isEmptyNote(value: any): value is EmptyNote {
+  return typeof value === 'object' &&
+    'noteID' in value &&
+    'title' in value &&
+    'createdAt' in value &&
+    'modifiedAt' in value
+}

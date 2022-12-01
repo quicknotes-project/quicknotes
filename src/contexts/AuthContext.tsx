@@ -33,7 +33,7 @@ export function AuthProvider({ children }: Nestable) {
   };
 
   const tryRegister = async (user: api.User) => {
-    const res = await api.register(user);
+    const res = await api.user.register(user);
 
     if (!res.success) {
       return res;
@@ -46,7 +46,7 @@ export function AuthProvider({ children }: Nestable) {
   };
 
   const tryLogin = async (creds: api.UserCreds) => {
-    const res = await api.login(creds);
+    const res = await api.user.login(creds);
 
     if (!res.success) {
       return res;
@@ -65,7 +65,7 @@ export function AuthProvider({ children }: Nestable) {
   };
 
   const logout = async () => {
-    await api.logout();
+    await api.user.logout();
     setUsername(null);
     setFullname(null);
   };

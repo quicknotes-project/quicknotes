@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from './contexts/AuthContext';
 import * as api from './services/backend';
 import { cn } from './utils';
@@ -8,6 +8,7 @@ import 'allotment/dist/style.css';
 import './App.css';
 
 import { Allotment } from 'allotment';
+import useNotes from './hooks/use-notes';
 
 const Markdown = React.lazy(() => import('./components/Markdown'));
 
@@ -16,47 +17,41 @@ type NoteState = '' | 'loading...' | 'saving...' | 'saved!' | 'error';
 export default function App() {
   const { fullname, logout } = useAuth();
 
-  const [notes, setNotes] = useState<api.NoteMetadata[]>([]);
+  const { notes, createNote } = useNotes();
 
-  const [currentNoteID, setCurrentNoteID] = useState<Maybe<string>>(null);
+  const [displayedNoteID, setDisplayedNoteID] = useState<Maybe<string>>(null);
 
   const [content, setContent] = useState<string>('');
 
-  const [currentNoteState, setCurrentNoteState] = useState<NoteState>('');
+  const [displayedNoteState, setDisplayedNoteState] = useState<NoteState>('');
 
   const [sizes, setSizes] = useState([3, 7]);
 
   const saveContent = async () => {
-    setCurrentNoteState('saving...');
-    if (!currentNoteID) {
+    setDisplayedNoteState('saving...');
+    if (!displayedNoteID) {
       console.log('tried to save note but no note selected!');
       // handle error?
       return;
     }
-    const res = await api.note.update(currentNoteID, { content });
+    const res = await api.note.update(displayedNoteID, { content });
     if (!res.success) {
       console.log('could not update note content!');
-      setCurrentNoteState('error');
+      setDisplayedNoteState('error');
       // handle error?
       return;
     }
-    setCurrentNoteState('saved!');
+    setDisplayedNoteState('saved!');
   };
 
-  const fetchNotes = async () => {
-    const res = await api.note.list();
-    console.log(res);
+  const handleCreateNote = async () => {
+    const res = await createNote();
     if (!res.success) {
-      console.log('could note fetch notes!');
-      // handle error
+      console.log(res.message);
       return;
     }
-    setNotes(res.value);
+    setDisplayedNoteID(res.value);
   };
-
-  useEffect(() => {
-    fetchNotes();
-  }, []);
 
   return (
     <>
@@ -79,25 +74,24 @@ export default function App() {
               <ul className="note-list">
                 <div className="note-list-header">
                   <span>Notes</span>
-                  <button className="button">+</button>
+                  <button className="button" onClick={handleCreateNote}>
+                    +
+                  </button>
                 </div>
                 {notes.map((note) => (
                   <li
                     key={note.noteID}
                     className={cn({
-                      active: note.noteID === currentNoteID,
+                      active: note.noteID === displayedNoteID,
                     })}
-                    data-state={currentNoteState}
+                    data-state={displayedNoteState}
                     onClick={async () => {
-                      setCurrentNoteID(note.noteID);
-                      setCurrentNoteState('loading...');
-                      // setLoadingContent(true);
+                      setDisplayedNoteID(note.noteID);
+                      setDisplayedNoteState('loading...');
                       const res = await api.note.fetch(note.noteID);
-                      // setLoadingContent(false);
-                      setCurrentNoteState('');
-                      console.log(res);
+                      setDisplayedNoteState('');
                       if (!res.success) {
-                        // handle error
+                        console.log(res.message);
                         return;
                       }
                       setContent(res.value.content);
@@ -113,6 +107,7 @@ export default function App() {
               <Markdown
                 value={content || ''}
                 onChange={(value) => setContent(value ?? '')}
+                preview="edit"                
               />
             </Allotment.Pane>
           </Allotment>
