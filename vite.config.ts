@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv, UserConfig } from 'vite';
+import { defineConfig, loadEnv, ServerOptions, UserConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 import svgrPlugin from 'vite-plugin-svgr';
@@ -10,6 +10,10 @@ export default defineConfig(async ({ mode }) => {
 
   const config: UserConfig = {
     plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
+  }
+
+  const server: ServerOptions = {
+    port: 8000
   }
 
   switch (mode) {
@@ -31,18 +35,14 @@ export default defineConfig(async ({ mode }) => {
       if (!tunnel) {
         return {
           ...config,
-          server: {
-            open: true,
-            port: 8000
-          },
+          server
         }
       }
 
       return {
         ...config,
         server: {
-          open: true,
-          port: 8000,
+          ...server,
           proxy: {
             "/api": tunnel.public_url
           }

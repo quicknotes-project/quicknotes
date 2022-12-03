@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import RequireAuth from './components/RequireAuth';
+import RequireAuth from './components/routing/RequireAuth';
 import { AuthProvider } from './contexts/AuthContext';
 import './index.css';
 

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { StrictNestable } from '../types';
-import { renderIf } from '../utils';
+import { useAuth } from '../../contexts/AuthContext';
+import { StrictNestable } from '../../types';
+import { renderIf } from '../../utils';
 
 export default function RequireAuth({ children }: StrictNestable) {
   const { username, tryFetch } = useAuth();

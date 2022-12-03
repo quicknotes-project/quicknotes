@@ -1,4 +1,4 @@
-import { cn } from '../../utils';
+import { cn } from '../../../utils';
 import {
   Changeable,
   Classable,
@@ -9,7 +9,7 @@ import {
   Placeholderable,
   Touchable,
   Validatable,
-} from '../../types';
+} from '../../../types';
 import './Form.css';
 
 export default function Form() {

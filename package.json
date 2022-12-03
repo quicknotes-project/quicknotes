@@ -19,7 +19,8 @@
     "typescript": "^4.8.4"
   },
   "scripts": {
-    "start": "vite",
+    "start": "vite --open",
+    "restart": "vite",
     "build": "tsc && vite build",
     "build-preview": "tsc && vite build --mode preview"
   },

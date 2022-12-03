@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import Form from '../../components/Form';
+import Form from '../../components/ui/Form';
 import { cn, renderIf } from '../../utils';
 import { Maybe } from '../../types';
 import './AuthPage.css';
@@ -125,7 +125,7 @@ export default function AuthPage() {
             type={field.type}
             className="auth-input-group"
             disabled={loading}
-            hidden={field.name === 'fullname' && authMode === 'Sign in'}
+            hidden={!field.required}
             invalid={field.invalid}
             touched={touched}
             invalidMessage={field.invalidMessage}
