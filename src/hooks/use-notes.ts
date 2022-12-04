@@ -29,9 +29,13 @@ export default function useNotes() {
     return makeSuccessful(note.noteID)
   }
 
+  const updateNote = async (noteID: string, updates: api.NoteUpdate): Promise<Optional<void>> => {
+    return api.note.update(noteID, updates)
+  }
+
   useEffect(() => {
     fetchNotes();
   }, []);
 
-  return { notes, createNote }
+  return { notes, createNote, updateNote, fetchNotes }
 }

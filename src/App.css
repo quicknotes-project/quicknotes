@@ -1,3 +1,9 @@
+.header-content,
+.main-content {
+  width: 100%;
+  padding-left: 2em;
+}
+
 header {
   height: 3em;
   display: flex;
@@ -10,14 +16,19 @@ header {
   justify-content: space-between;
 }
 
-.logo {
-  font: bold 1.5rem var(--ff-serif);
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1em;
 }
 
-.header-content,
-.main-content {
-  width: 100%;
-  padding-left: 2em;
+.display-state {
+  opacity: .7;
+  text-transform: capitalize;
+}
+
+.logo {
+  font: bold 1.5rem var(--ff-serif);
 }
 
 main {
@@ -55,7 +66,18 @@ main {
   font: bold 1.1rem var(--ff-sans)
 }
 
-.note-list li {
+.note-list-item *:focus-within,
+.note-title-wrapper *:focus-within {
+  padding: none;
+  margin: none;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  color: var(--color);
+  font: inherit;
+}
+
+.note-list-item {
   cursor: pointer;
   position: relative;
   padding-left: .4em;
@@ -63,16 +85,15 @@ main {
   user-select: none;
 }
 
-.note-list li.active,
-.note-list li:hover {
+.note-list-item.active,
+.note-list-item:hover {
   background-color: rgba(255, 255, 255, 0.3);
 }
 
-.note-list li.active::after {
-  content: attr(data-state);
-  position: absolute;
-  top: 0;
-  right: 0;
-  opacity: .5;
-  transform: translateX(-5%);
+.note-title-wrapper {
+  padding-top: .3em;
+  padding-left: .5em;
+  background-color: #0d1117;
+  font: 2rem var(--ff-serif);
+  color: var(--color);
 }

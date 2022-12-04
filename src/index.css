@@ -161,31 +161,3 @@ h3 {
 .link.accent:hover {
   color: var(--accent-link-hover-color);
 }
-
-input.editing:focus {
-  outline: initial;
-}
-
-.button.red {
-  background-color: red;
-  border-top-color: #ffa0a0;
-  border-left-color: #fe7777;
-  border-bottom-color: #fe7777;
-  border-right-color: #ffa0a0;
-  color: white;
-}
-
-.button.edit {
-  margin: 0;
-  padding: 0;
-  width: 1.6em;
-  aspect-ratio: 1/1;
-  border-radius: .3em;
-  line-height: 1.4em;
-}
-
-.button.edit.active {
-  border-style: inset;
-  background-color: var(--accent-bg-color);
-  color: var(--accent-color);
-}
