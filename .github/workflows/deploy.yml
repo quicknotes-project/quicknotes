@@ -30,6 +30,7 @@ jobs:
           port=${url##*:}
           echo "host=$host" >> $GITHUB_ENV
           echo "port=$port" >> $GITHUB_ENV
+          rm tunnels.json
 
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -45,7 +46,7 @@ jobs:
       - name: Deploy
         env:
           switches: -avz --delete
-          path: build/
+          path: dist/
           remote_user: pi
           remote_host: ${{ env.host }}
           remote_port: ${{ env.port }}

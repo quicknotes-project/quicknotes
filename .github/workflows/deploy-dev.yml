@@ -30,6 +30,7 @@ jobs:
           port=${url##*:}
           echo "host=$host" >> $GITHUB_ENV
           echo "port=$port" >> $GITHUB_ENV
+          rm tunnels.json
 
       - name: Setup Node
         uses: actions/setup-node@v3
