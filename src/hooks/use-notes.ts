@@ -8,8 +8,8 @@ export default function useNotes() {
   const fetchNotes = async () => {
     const res = await api.note.list();
     if (!res.success) {
-      console.log('could not fetch notes!');
       // handle error
+      console.log(res.message);
       return;
     }
     const notes = res.value

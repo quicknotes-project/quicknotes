@@ -41,9 +41,9 @@ export default function App() {
     setAppState('saving...');
     const res = await updateNote(noteID, updates);
     if (!res.success) {
+      console.log(res.message);
       setAppState('error');
       setTimeout(() => setAppState(''), 750);
-      console.log(res.message);
       return;
     }
     setAppState('saved!');
@@ -65,6 +65,8 @@ export default function App() {
     handleUpdateNote(displayedNoteID, { content });
   };
 
+  const isMobile = window.innerWidth <= 500
+
   return (
     <>
       <header>
@@ -85,7 +87,7 @@ export default function App() {
       <main>
         <div className="main-content">
           <Allotment defaultSizes={sizes} onChange={setSizes}>
-            <Allotment.Pane minSize={150}>
+            <Allotment.Pane minSize={150} visible={!isMobile}>
               <ul className="note-list">
                 <div className="note-list-header">
                   <span
