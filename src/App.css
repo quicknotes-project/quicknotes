@@ -8,6 +8,8 @@ header {
   height: 3em;
   display: flex;
   justify-content: center;
+  background-color: rgb(0, 0, 0, 0.5);
+
 }
 
 .header-content {
@@ -47,8 +49,9 @@ main {
 
 .note-list {
   margin: 0;
+  margin-top: .5em;
+  margin-right: 2em;
   padding: 0;
-  padding-right: 2em;
   list-style-type: none;
   display: flex;
   flex-direction: column;

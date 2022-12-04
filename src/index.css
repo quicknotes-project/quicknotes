@@ -1,4 +1,4 @@
-/*    ----    Global config    ----    */
+/*    ----    Global variables    ----    */
 
 :root {
   --bg-color: #ddd;
@@ -8,7 +8,7 @@
   --light: rgb(136, 95, 163);
   --lighter: rgb(181, 149, 203);
   --lightest: rgb(221, 202, 234);
-  
+
 
   --color: white;
   --ph-color: gray;
@@ -30,6 +30,8 @@
   --ff-sans: 'Source Sans Pro', sans-serif;
 }
 
+/*    ----    Global config    ----    */
+
 *,
 *::before,
 *::after {
@@ -42,15 +44,13 @@ html {
   font-family: var(--ff-sans);
 }
 
-/*    ----    Extraneous config    ----    */
-
 body {
   height: 100vh;
   margin: 0;
 }
 
 #root {
-  height: 100vh; 
+  height: 100vh;
   display: flex;
   flex-direction: column;
   background-color: var(--dark);
@@ -87,10 +87,12 @@ h3 {
   color: #333;
 }
 
-.button:disabled {
-  cursor: default;
-  border-color: var(gray) !important;
-  background-color: var(gray) !important;
+.button:disabled,
+.button:disabled:active {
+  cursor: not-allowed;
+  border-color: gray !important;
+  background-color: gray !important;
+  color: var(--color);
 }
 
 .input {

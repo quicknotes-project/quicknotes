@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { useAuth } from './contexts/AuthContext';
 import useNotes from './hooks/use-notes';
 import * as api from './services/backend';
-import { Maybe } from './types';
 import { cn } from './utils';
 import './App.css';
 
@@ -21,7 +20,7 @@ export default function App() {
 
   const { notes, createNote, updateNote, fetchNotes } = useNotes();
 
-  const [displayedNoteID, setDisplayedNoteID] = useState<Maybe<string>>(null);
+  const [displayedNoteID, setDisplayedNoteID] = useState<string | null>(null);
 
   const [content, setContent] = useState<string>('');
 
@@ -144,12 +143,17 @@ export default function App() {
             </Allotment.Pane>
 
             <Allotment.Pane minSize={200}>
-              <div className="note-title-wrapper">
+              <div
+                className="note-title-wrapper"
+                style={{
+                  // borderTop: '1px solid rgba(128, 128, 128, 0.35)',
+                }}
+              >
                 <EditableText
                   readonly={displayedNoteID === null}
                   defaultValue={
                     notes.find(({ noteID }) => noteID === displayedNoteID)
-                      ?.title || 'None selected'
+                      ?.title || 'Nothing selected'
                   }
                   className={cn('note-title', {
                     placeholder: displayedNoteID === null,
