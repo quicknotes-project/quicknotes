@@ -1,6 +1,6 @@
 import routes from "../../config/routes";
 import { makeFailed, makeSuccessful, Optional } from "../../utils/Optional";
-import { isUserData, User, UserCreds, UserData } from "./types";
+import { isUserNames, User, UserCredentials, UserNames } from "./types";
 
 async function registerUser(user: User): Promise<Optional<void>> {
   const res = await fetch(routes.register(), {
@@ -21,7 +21,7 @@ async function registerUser(user: User): Promise<Optional<void>> {
   }
 }
 
-async function loginUser(creds: UserCreds): Promise<Optional<void>> {
+async function loginUser(creds: UserCredentials): Promise<Optional<void>> {
   const res = await fetch(routes.login(), {
     method: 'POST',
     headers: {
@@ -50,7 +50,7 @@ async function logoutUser(): Promise<Optional<void>> {
   }
 }
 
-async function fetchUser(): Promise<Optional<UserData>> {
+async function fetchUser(): Promise<Optional<UserNames>> {
   const res = await fetch(routes.user(), {
     headers: {
       'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ async function fetchUser(): Promise<Optional<UserData>> {
   }
 
   const user = await res.json()
-  if (!isUserData(user)) {
+  if (!isUserNames(user)) {
     return makeFailed('Server returned malformed data')
   }
 

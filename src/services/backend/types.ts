@@ -1,87 +1,96 @@
-export interface User {
+import { WritableKeys } from "../../types";
+
+export interface UserBase {
   username: string;
-  fullname: string;
-  password: string
 }
 
-export type UserCreds = Omit<User, 'fullname'>
-export type UserData = Omit<User, 'password'>
+export interface UserCredentials extends UserBase {
+  password: string;
+}
 
-export function isUserData(value: any): value is UserData {
-  return typeof value === 'object' && 'username' in value && 'fullname' in value
+export interface UserNames extends UserBase {
+  fullname: string;
+}
+
+export interface User extends UserCredentials, UserNames {}
+
+export function isUserNames(value: any): value is UserNames {
+  return (
+    typeof value === "object" &&
+    "username" in value &&
+    typeof value.username === "string" &&
+    "fullname" in value &&
+    typeof value.fullname === "string"
+  );
 }
 
 export interface Tag {
-  tagID: string,
-  title: string,
-  color: string
+  tagID: string;
+  title: string;
 }
 
-export function NewTag(title: string, color: string): Omit<Tag, 'tagID'> {
-  return { title, color };
-}
+// export function NewTag(title: string): Omit<Tag, "tagID"> {
+//   return { title };
+// }
 
 export function isTag(value: any): value is Tag {
-  return typeof value === 'object' && 'tagID' in value && 'title' in value && 'color' in value
+  return typeof value === "object" && "tagID" in value && "title" in value;
 }
 
-export interface Note {
-  noteID: string,
-  title: string,
-  createdAt: string,
-  modifiedAt: string,
-  tags: Tag[],
-  content: string
+export interface NoteMeta {
+  noteID: string;
+  title: string;
+  readonly createdAt: string;
+  readonly modifiedAt: string;
 }
+
+export interface Tagged {
+  readonly tags: Tag[];
+}
+
+export interface Note extends NoteMeta, Tagged {
+  content: string;
+}
+
+export type NoteUpdate = Partial<Pick<Note, WritableKeys<Note>>>;
 
 export function isNote(value: any): value is Note {
-  return typeof value === 'object' &&
-    'title' in value &&
-    // 'tags' in value &&
-    'createdAt' in value &&
-    'modifiedAt' in value &&
-    'content' in value
+  return (
+    typeof value === "object" &&
+    "title" in value &&
+    "tags" in value &&
+    "createdAt" in value &&
+    "modifiedAt" in value &&
+    "content" in value
+  );
 }
 
-function dateToString(date: Date): string {
-  return `${date.getFullYear}-${date.getMonth}-${date.getDate} ${date.getHours}:${date.getMinutes}:${date.getSeconds}`
-}
+// function dateToString(date: Date): string {
+//   return `${date.getFullYear}-${date.getMonth}-${date.getDate} ${date.getHours}:${date.getMinutes}:${date.getSeconds}`;
+// }
 
-export function NewNote(
-  title: string,
-  content: string,
-  tags?: Tag[],
-  createdAt?: string,
-  modifiedAt?: string
-): Omit<Note, 'noteID'> {
-  return {
-    title,
-    content,
-    tags: tags ?? [],
-    createdAt: createdAt ?? dateToString(new Date()),
-    modifiedAt: modifiedAt ?? dateToString(new Date()),
-  };
-}
+// export function NewNote(
+//   title: string,
+//   content: string,
+//   tags?: Tag[],
+//   createdAt?: string,
+//   modifiedAt?: string
+// ): Omit<Note, "noteID"> {
+//   return {
+//     title,
+//     content,
+//     tags: tags ?? [],
+//     createdAt: createdAt ?? dateToString(new Date()),
+//     modifiedAt: modifiedAt ?? dateToString(new Date()),
+//   };
+// }
 
-export type NoteMetadata = Omit<Note, 'content'>
-
-export function isNoteMetadata(value: any): value is NoteMetadata {
-  return typeof value === 'object' &&
-    'noteID' in value &&
-    'title' in value &&
-    // 'tags' in value &&
-    'createdAt' in value &&
-    'modifiedAt' in value
-}
-
-export type NoteUpdate = Partial<Pick<Note, 'title' | 'tags' | 'content'>>
-
-export type EmptyNote = Omit<Note, 'content' | 'tags'>
-
-export function isEmptyNote(value: any): value is EmptyNote {
-  return typeof value === 'object' &&
-    'noteID' in value &&
-    'title' in value &&
-    'createdAt' in value &&
-    'modifiedAt' in value
+export function isNoteMeta(value: any): value is NoteMeta {
+  return (
+    typeof value === "object" &&
+    "noteID" in value &&
+    "title" in value &&
+    "createdAt" in value &&
+    "modifiedAt" in value
+  );
 }

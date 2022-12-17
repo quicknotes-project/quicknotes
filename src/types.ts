@@ -1,8 +1,22 @@
-import { Argument as ClassArgument } from 'classnames';
+import { Argument as ClassArgument } from "classnames";
 
-export type Maybe<T> = T | null
+export type { ClassArgument };
 
-export type { ClassArgument }
+export type IfEquals<X, Y, A = X, B = never> = (<T>() => T extends X
+  ? 1
+  : 2) extends <T>() => T extends Y ? 1 : 2
+  ? A
+  : B;
+
+export type WritableKeys<T> = {
+  [P in keyof T]-?: IfEquals<
+    { [Q in P]: T[P] },
+    { -readonly [Q in P]: T[P] },
+    P
+  >;
+}[keyof T];
+
+export type Maybe<T> = T | null;
 
 export interface Substitutable {
   as?: keyof HTMLElementTagNameMap;
@@ -41,12 +55,12 @@ export interface Styleable {
 }
 
 export interface Placeholderable {
-  placeholder?: string
+  placeholder?: string;
 }
 
 export interface Focusable<T extends HTMLElement> {
-  onFocus?: React.FocusEventHandler<T>
-  onBlur?: React.FocusEventHandler<T>
+  onFocus?: React.FocusEventHandler<T>;
+  onBlur?: React.FocusEventHandler<T>;
 }
 
 export interface Validatable {
@@ -58,7 +72,7 @@ export interface Validatable {
 
 export interface Clickable<T extends HTMLElement> {
   onClick?: React.MouseEventHandler<T>;
-  onAuxClick?: React.MouseEventHandler<T>
+  onAuxClick?: React.MouseEventHandler<T>;
   onDoubleClick?: React.MouseEventHandler<T>;
   onContextMenu?: React.MouseEventHandler<T>;
 }
@@ -83,11 +97,12 @@ export interface Changeable<T extends HTMLElement> {
 }
 
 export interface Submittable<T extends HTMLElement> {
-  onSubmit?: React.FormEventHandler<T>
+  onSubmit?: React.FormEventHandler<T>;
 }
 
 export interface Inputtable<TValue, TElement extends HTMLElement>
-  extends HasValue<TValue>, Changeable<TElement> { }
+  extends HasValue<TValue>,
+    Changeable<TElement> {}
 
 export interface HasCoords {
   x: number;

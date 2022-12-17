@@ -22,9 +22,7 @@ header {
   justify-content: space-between;
 }
 
-@media screen and (min-width: 500px) {
-  
-}
+@media screen and (min-width: 500px) {}
 
 .header-left {
   display: flex;
@@ -79,7 +77,8 @@ main {
 }
 
 .note-list-item *:focus-within,
-.note-title-wrapper *:focus-within {
+.note-title-wrapper *:focus-within,
+.note-tag *:focus-within {
   padding: none;
   margin: none;
   border: none;
@@ -108,4 +107,35 @@ main {
   background-color: #0d1117;
   font: 2rem var(--ff-serif);
   color: var(--color);
+}
+
+.note-tag-list {
+  padding: 0;
+  padding-left: 1em;
+  padding-bottom: .5em;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: .5em;
+  list-style-type: none;
+  background-color: #0d1117;
+}
+
+.note-tag {
+  padding: 0 .2em;
+  width: max-content;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: .2em;
+  font-size: 1.5rem;
+  color: var(--light);
+}
+
+.note-tag:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+.note-tag> :first-child> ::before {
+  content: '#';
+  color: inherit;
 }

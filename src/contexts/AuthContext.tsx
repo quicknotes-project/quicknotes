@@ -9,7 +9,7 @@ interface AuthAPI {
   fullname: Maybe<string>;
   tryFetch: () => Promise<Optional<void>>;
   tryRegister: (user: api.User) => Promise<Optional<void>>;
-  tryLogin: (creds: api.UserCreds) => Promise<Optional<void>>;
+  tryLogin: (creds: api.UserCredentials) => Promise<Optional<void>>;
   logout: () => void;
 }
 
@@ -45,7 +45,7 @@ export function AuthProvider({ children }: Nestable) {
     return makeSuccessful(undefined);
   };
 
-  const tryLogin = async (creds: api.UserCreds) => {
+  const tryLogin = async (creds: api.UserCredentials) => {
     const res = await api.user.login(creds);
 
     if (!res.success) {

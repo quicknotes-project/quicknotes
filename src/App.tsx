@@ -1,32 +1,39 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState } from 'react';
-import { useAuth } from './contexts/AuthContext';
-import useNotes from './hooks/use-notes';
-import * as api from './services/backend';
-import { cn } from './utils';
-import './App.css';
+import React, { useState } from "react";
+import { useAuth } from "./contexts/AuthContext";
+import useNotes from "./hooks/use-notes";
+import * as api from "./services/backend";
+import { cn, renderIf } from "./utils";
+import { Maybe } from "./types";
+import "./App.css";
 
-import { Allotment } from 'allotment';
-import 'allotment/dist/style.css';
+import { Allotment } from "allotment";
+import "allotment/dist/style.css";
 
-import { OnSaveProps } from './components/ui/EditableText';
-const EditableText = React.lazy(() => import('./components/ui/EditableText'));
-const Markdown = React.lazy(() => import('./components/Markdown'));
+import { OnSaveProps } from "./components/ui/EditableText";
+const EditableText = React.lazy(() => import("./components/ui/EditableText"));
 
-type AppState = '' | 'loading...' | 'saving...' | 'saved!' | 'error';
+const Markdown = React.lazy(() => import("./components/Markdown"));
+
+const Modal = React.lazy(() => import("./components/Modal"));
+
+type AppState = "" | "loading..." | "saving..." | "done!" | "error";
 
 export default function App() {
   const { fullname, logout } = useAuth();
 
-  const { notes, createNote, updateNote, fetchNotes } = useNotes();
+  const { notes, fetchNotes, getNote, createNote, updateNote, deleteNote } =
+    useNotes();
 
-  const [displayedNoteID, setDisplayedNoteID] = useState<string | null>(null);
+  const [displayedNote, setDisplayedNote] = useState<Maybe<api.Note>>(null);
 
-  const [content, setContent] = useState<string>('');
+  const [appState, setAppState] = useState<AppState>("");
 
-  const [appState, setAppState] = useState<AppState>('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const [sizes, setSizes] = useState([3, 7]);
+
+  const isMobile = window.innerWidth <= 500;
 
   const handleCreateNote = async () => {
     const res = await createNote();
@@ -34,38 +41,68 @@ export default function App() {
       console.log(res.message);
       return;
     }
-    setDisplayedNoteID(res.value);
+    setDisplayedNote(res.value);
   };
 
-  const handleUpdateNote = async (noteID: string, updates: api.NoteUpdate) => {
-    setAppState('saving...');
-    const res = await updateNote(noteID, updates);
-    if (!res.success) {
-      console.log(res.message);
-      setAppState('error');
-      setTimeout(() => setAppState(''), 750);
+  const handleUpdateNote = async (updates: api.NoteUpdate) => {
+    if (!displayedNote) {
       return;
     }
-    setAppState('saved!');
-    setTimeout(() => setAppState(''), 750);
+    setAppState("saving...");
+    const res = await updateNote(displayedNote.noteID, updates);
+    if (!res.success) {
+      console.log(res.message);
+      setAppState("error");
+      setTimeout(() => setAppState(""), 750);
+      return;
+    }
+    setAppState("done!");
+    setTimeout(() => setAppState(""), 750);
     await fetchNotes();
   };
 
   const handleSaveNoteTitle = async ({ value, previousValue }: OnSaveProps) => {
-    if (displayedNoteID === null || previousValue === value) {
+    if (displayedNote === null || previousValue === value) {
       return;
     }
-    handleUpdateNote(displayedNoteID, { title: value });
+    handleUpdateNote({ title: value });
   };
 
   const handleSaveContent = async () => {
-    if (displayedNoteID === null) {
-      return;
-    }
-    handleUpdateNote(displayedNoteID, { content });
+    handleUpdateNote({ content: displayedNote?.content });
   };
 
-  const isMobile = window.innerWidth <= 500
+  const handleOpenNote = async (noteID: string) => {
+    setAppState("loading...");
+    const res = await getNote(noteID);
+    if (!res.success) {
+      console.log(res.message);
+      setAppState("error");
+      setTimeout(() => setAppState(""), 750);
+      return;
+    }
+    setDisplayedNote(res.value);
+    setAppState("done!");
+    setTimeout(() => setAppState(""), 750);
+  };
+
+  const handleDeleteNote = async (noteID: string) => {
+    setAppState("loading...");
+    const res = await deleteNote(noteID);
+    if (!res.success) {
+      console.log(res.message);
+      setAppState("error");
+      setTimeout(() => setAppState(""), 750);
+      return;
+    }
+    if (displayedNote?.noteID === noteID) {
+      setDisplayedNote(null);
+    }
+    setAppState("done!");
+    setTimeout(() => setAppState(""), 750);
+  };
+
+  const handleAddTag = async (title: string) => {};
 
   return (
     <>
@@ -76,7 +113,7 @@ export default function App() {
             <span className="display-state">{appState}</span>
           </div>
           <div>
-            logged in as {fullname}{' '}
+            logged in as {fullname}{" "}
             <button className="button" onClick={logout}>
               logout
             </button>
@@ -87,20 +124,10 @@ export default function App() {
       <main>
         <div className="main-content">
           <Allotment defaultSizes={sizes} onChange={setSizes}>
-            <Allotment.Pane minSize={150} visible={!isMobile}>
+            <Allotment.Pane minSize={300} visible={!isMobile}>
               <ul className="note-list">
                 <div className="note-list-header">
-                  <span
-                    onClick={() => {
-                      setDisplayedNoteID(null);
-                      setContent('');
-                    }}
-                    style={{
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Notes
-                  </span>
+                  <span>Notes</span>
                   <button className="button" onClick={handleCreateNote}>
                     +
                   </button>
@@ -108,71 +135,144 @@ export default function App() {
                 {notes.map((note) => (
                   <li
                     key={note.noteID}
-                    className={cn('note-list-item', {
-                      active: note.noteID === displayedNoteID,
+                    className={cn("note-list-item", {
+                      active: note.noteID === displayedNote?.noteID,
                     })}
-                    onClick={async () => {
-                      setDisplayedNoteID(note.noteID);
-                      setAppState('loading...');
-                      const res = await api.note.fetch(note.noteID);
-                      setAppState('');
-                      if (!res.success) {
-                        console.log(res.message);
+                    onClick={(e) => {
+                      if (e.ctrlKey) {
+                        handleDeleteNote(note.noteID);
                         return;
                       }
-                      setContent(res.value.content);
+                      if (displayedNote?.noteID === note.noteID) {
+                        return;
+                      }
+                      handleOpenNote(note.noteID);
                     }}
                   >
                     <EditableText
-                      readonly={note.noteID !== displayedNoteID}
+                      readonly={note.noteID !== displayedNote?.noteID}
                       defaultValue={note.title}
                       onSave={handleSaveNoteTitle}
+                      className="note-list-item-title"
                     />
                   </li>
                 ))}
                 <button
                   className="button"
                   style={{
-                    width: '100%',
-                    marginTop: '.5em',
+                    width: "100%",
+                    marginTop: ".5em",
                   }}
                   onClick={handleSaveContent}
-                  disabled={displayedNoteID === null}
+                  disabled={displayedNote === null}
                 >
                   Save
                 </button>
               </ul>
             </Allotment.Pane>
 
-            <Allotment.Pane minSize={200}>
+            <Allotment.Pane minSize={300}>
               <div
                 className="note-title-wrapper"
-                style={{
-                  // borderTop: '1px solid rgba(128, 128, 128, 0.35)',
-                }}
+                onClick={displayedNote === null ? handleCreateNote : undefined}
+                style={{ cursor: "pointer" }}
               >
                 <EditableText
-                  readonly={displayedNoteID === null}
+                  readonly={displayedNote === null}
                   defaultValue={
-                    notes.find(({ noteID }) => noteID === displayedNoteID)
-                      ?.title || 'Nothing selected'
+                    notes.find(({ noteID }) => noteID === displayedNote?.noteID)
+                      ?.title || "New note..."
                   }
-                  className={cn('note-title', {
-                    placeholder: displayedNoteID === null,
+                  className={cn("note-title", {
+                    placeholder: displayedNote === null,
                   })}
                   onSave={handleSaveNoteTitle}
                 />
               </div>
+              {displayedNote && (
+                <TagList
+                  key={displayedNote.noteID}
+                  tags={displayedNote.tags}
+                  onSave={handleAddTag}
+                />
+              )}
               <Markdown
-                value={content || ''}
-                onChange={(value) => setContent(value ?? '')}
-                preview="edit"
-                hideToolbar={displayedNoteID === null}
+                value={
+                  appState === "loading..." ? "" : displayedNote?.content || ""
+                }
+                onChange={(value) => {
+                  setDisplayedNote((note) => {
+                    if (note === null) {
+                      return note;
+                    }
+                    return {
+                      ...note,
+                      content: value ?? "",
+                    };
+                  });
+                }}
+                preview={displayedNote === null ? "preview" : "edit"}
+                hideToolbar={displayedNote === null}
+                onClickCapture={() => {
+                  if (displayedNote !== null) {
+                    return;
+                  }
+                  console.log("markdown onclick fired");
+                  handleCreateNote();
+                }}
+                style={{
+                  cursor: displayedNote === null ? "pointer" : "initial",
+                }}
               />
             </Allotment.Pane>
           </Allotment>
         </div>
       </main>
     </>
+  );
+}
+
+export interface TagListProps {
+  tags: api.Tag[];
+  onUpdate?: (tagID: string, title: string) => any;
+  onSave?: (title: string) => any;
+}
+
+function TagList({ tags, onUpdate, onSave }: TagListProps) {
+  const [showNewTag, setShowNewTag] = useState(false);
+
+  return (
+    <ul className="note-tag-list">
+      {tags.map((tag) => (
+        <li key={tag.tagID} className="note-tag">
+          <EditableText
+            defaultValue={tag.title}
+            onBlur={() => setShowNewTag(false)}
+            onSave={({ value }) => {
+              onUpdate?.(tag.tagID, value);
+            }}
+          />
+        </li>
+      ))}
+      {renderIf(
+        showNewTag,
+        <li className="note-tag">
+          <EditableText
+            defaultValue="tag-title"
+            onBlur={() => setShowNewTag(false)}
+            onSave={({ value }) => {
+              setShowNewTag(false);
+              onSave?.(value);
+            }}
+          />
+        </li>
+      )}
+      <button
+        className="button"
+        onClick={() => setShowNewTag((state) => !state)}
+      >
+        {showNewTag ? "-" : "+"}
+      </button>
+    </ul>
   );
 }
