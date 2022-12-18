@@ -196,6 +196,20 @@ export default function App() {
     }
   };
 
+  const handleTagClick =
+    (tag: api.Tag) => (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+      switch (true) {
+        case e.shiftKey: {
+          e.stopPropagation();
+          setQuery((state) => {
+            const newQuery = `${state} tag:#${tag.title} `;
+            return newQuery.trimStart();
+          });
+          return;
+        }
+      }
+    };
+
   return (
     <>
       <main className="app">
@@ -229,7 +243,7 @@ export default function App() {
                 />
               </Allotment.Pane>
               <Allotment.Pane>
-                <TagList tags={tags} />
+                <TagList tags={tags} onClick={handleTagClick} />
               </Allotment.Pane>
             </Allotment>
           </Allotment.Pane>
@@ -326,7 +340,7 @@ function NoteList({
           +
         </button>
       </div>
-      <ul className="note-list">
+      <ul className="list">
         {notes?.map((note) => (
           <li
             key={note.noteID}
@@ -359,7 +373,7 @@ function NoteList({
 
 interface TagListProps {
   tags: api.Tag[];
-  onClick?: (tagID: string) => React.MouseEventHandler<HTMLLIElement>;
+  onClick?: (tag: api.Tag) => React.MouseEventHandler<HTMLLIElement>;
   onSave?: (tagID: string, props: OnSaveProps) => any;
 }
 
@@ -368,23 +382,22 @@ function TagList({ tags, onClick, onSave }: TagListProps) {
     <div className="list-wrapper">
       <div className="list-header">
         <span>Tags</span>
-        <ul className="tag-list">
-          {tags.map((tag) => (
-            <li
-              key={tag.tagID}
-              className="list-item"
-              onClickCapture={onClick?.(tag.tagID)}
-            >
-              <EditableText
-                defaultValue={tag.title}
-                onSave={(props) => onSave?.(tag.tagID, props)}
-                className="note-list-item-title"
-              />
-              {tag.title}
-            </li>
-          ))}
-        </ul>
       </div>
+      <ul className="list">
+        {tags.map((tag) => (
+          <li
+            key={tag.tagID}
+            className="list-item"
+            onClickCapture={onClick?.(tag)}
+          >
+            <EditableText
+              defaultValue={tag.title}
+              onSave={(props) => onSave?.(tag.tagID, props)}
+              className="note-list-item-title"
+            />
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

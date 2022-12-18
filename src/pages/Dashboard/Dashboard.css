@@ -2,6 +2,47 @@
   padding-left: 1em;
 }
 
-.user-form label {
+.user-form {
+  width: min-content;
+  display: flex;
+  flex-direction: column;
+  gap: .5em;
+}
+
+.user-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: .3em;
+}
+
+.user-input-group label {
   display: none;
+}
+
+.user-input-group input {
+  width: 14em;
+  border: 2px solid var(--medium);
+  border-radius: .2em;
+  background-color: var(--darker);
+  color: var(--color);
+}
+
+.user-input-group .invalid-message {
+  font: italic .8rem serif;
+  color: red;
+}
+
+.user-status {
+  font: .9rem sans-serif;
+  color: var(--lightest)
+}
+
+.error-message {
+  font: italic .9rem serif;
+  color: var(--invalid-color);
+}
+
+.user-form .button.submit {
+  margin-top: 1em;
+  width: 100%;
 }

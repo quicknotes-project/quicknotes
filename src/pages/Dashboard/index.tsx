@@ -115,7 +115,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        <button className="button" disabled={loading}>
+        <button className="button submit" disabled={loading}>
           Submit
         </button>
       </form>

@@ -3,7 +3,7 @@ import { makeFailed, makeSuccessful, Optional } from "../../utils/Optional";
 import { isTag, Tag } from "./types";
 
 async function getAllTags(): Promise<Optional<Tag[]>> {
-  const res = await fetch(routes.tag(), {
+  const res = await fetch(routes.tags(), {
     headers: {
       "ngrok-skip-browser-warning": "skip",
     },
