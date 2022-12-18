@@ -1,15 +1,12 @@
 import routes from "../../config/routes";
 import { makeFailed, makeSuccessful, Optional } from "../../utils/Optional";
-import { Tag } from "./types";
+import { isTag, Tag } from "./types";
 
-async function addTag(noteID: string, title: string): Promise<Optional<void>> {
+async function getAllTags(): Promise<Optional<Tag[]>> {
   const res = await fetch(routes.tag(), {
-    method: "POST",
     headers: {
-      "Content-Type": "application/json",
       "ngrok-skip-browser-warning": "skip",
     },
-    body: JSON.stringify({ noteID, title }),
   });
 
   if (!res.ok) {
@@ -23,7 +20,13 @@ async function addTag(noteID: string, title: string): Promise<Optional<void>> {
     }
   }
 
-  return makeSuccessful(void 0);
+  const tags = await res.json();
+
+  if (!Array.isArray(tags) || !tags.every(isTag)) {
+    return makeFailed("Server returned malformed data");
+  }
+
+  return makeSuccessful(tags);
 }
 
 async function editTag(update: Tag): Promise<Optional<void>> {
@@ -74,7 +77,7 @@ async function deleteTag(tagID: string): Promise<Optional<void>> {
 }
 
 export const tag = {
-  add: addTag,
+  getAll: getAllTags,
   edit: editTag,
   delete: deleteTag,
 };

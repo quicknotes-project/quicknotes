@@ -23,6 +23,7 @@
   --invalid-color: red;
 
   --separator-border: rgba(128, 128, 128, 0.35);
+  --focus-border: rgb(168, 70, 233) !important;
 
   --ff-serif: 'Source Serif Pro', serif;
   --ff-sans: 'Source Sans Pro', sans-serif;
@@ -55,6 +56,12 @@ body {
 }
 
 /*    ----    UI config    ---    */
+
+h1,
+h2,
+h3 {
+  font-family: var(--ff-serif);
+}
 
 h3 {
   margin: 0;
@@ -140,6 +147,7 @@ h3 {
 
 .link {
   text-decoration: underline;
+  font-weight: bold;
   color: var(--link-color);
 }
 

@@ -10,8 +10,8 @@ export default function NotFound() {
 
   return (
     <main className="not-found-page">
-      <h1>404</h1>
-      <div>
+      <h1 className="status-code">404</h1>
+      <div className="status-description">
         <h2>Not Found</h2>
         <div>
           <span>

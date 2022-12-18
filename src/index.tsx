@@ -4,9 +4,10 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import RequireAuth from "./routing/RequireAuth";
 import { AuthProvider } from "./contexts/AuthContext";
 import { AppStateProvider } from "./contexts/AppContext";
-import "./index.css";
 import Header from "./components/Header";
 import NotFound from "./pages/NotFound";
+import Dashboard from "./pages/Dashboard";
+import "./index.css";
 
 const AuthPage = React.lazy(() => import("./pages/AuthPage"));
 const App = React.lazy(() => import("./App"));
@@ -27,6 +28,14 @@ root.render(
               element={
                 <RequireAuth>
                   <App />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/me"
+              element={
+                <RequireAuth>
+                  <Dashboard />
                 </RequireAuth>
               }
             />

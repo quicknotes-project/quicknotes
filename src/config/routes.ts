@@ -1,7 +1,7 @@
 const prefix = "/api";
 
 export interface FindQueryParams {
-  content?: string;
+  title?: string;
   tags?: string | string[];
 }
 
@@ -15,17 +15,19 @@ const routes = {
     noteID
       ? `${prefix}/note?${new URLSearchParams({ noteID }).toString()}`
       : `${prefix}/note`, // при вызове без параметра noteID
+  notetag: () => `${prefix}/notetag`,
+  tags: () => `${prefix}/tags`,
   tag: (tagID?: string) =>
     tagID
       ? `${prefix}/tag?${new URLSearchParams({ tagID }).toString()}`
       : `${prefix}/tag`,
-  find: ({ content, tags }: FindQueryParams) => {
-    if (!content && !tags) {
+  find: ({ title, tags }: FindQueryParams) => {
+    if (!title && !tags) {
       return `${prefix}/find`;
     }
     const params = new URLSearchParams();
-    if (content) {
-      params.set("content", content);
+    if (title) {
+      params.set("title", title);
     }
     if (tags) {
       const tagsString = typeof tags === "string" ? tags : tags?.join(",");

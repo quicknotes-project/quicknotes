@@ -22,10 +22,14 @@ export default function App() {
     createNote,
     updateNote,
     deleteNote,
+    addTag,
+    updateTag,
+    deleteTag,
     query,
     setQuery,
-    addTag,
-    deleteTag,
+    tags,
+    updateTagGlobal,
+    deleteTagGlobal,
   } = useNotes();
 
   const [displayedNote, setDisplayedNote] = useState<Maybe<api.Note>>(null);
@@ -120,7 +124,7 @@ export default function App() {
       }
     };
 
-  const handleAddTag = (noteID: string) => async (title: string) => {
+  const handleAddNoteTag = (noteID: string) => async (title: string) => {
     console.log("handleaddtag fired");
     if (!/^[\w-]{1,}$/.test(title)) {
       console.log(`bad tag title ${title}`);
@@ -136,21 +140,42 @@ export default function App() {
     await handleOpenNote(noteID);
   };
 
-  const handleDeleteTag = async (tagID: string) => {
-    const res = await deleteTag(tagID);
+  const handleUpdateNoteTag =
+    (noteID: string) => async (tagID: string, title: string) => {
+      if (displayedNote === null) {
+        return;
+      }
+      setAppState("loading...");
+      const res = await updateTag(noteID, tagID, title);
+      if (!res.success) {
+        console.log(res.message);
+        setAppState("error");
+        setTimeout(() => setAppState(""), 750);
+        return;
+      }
+      setAppState("done!");
+      setTimeout(() => setAppState(""), 750);
+      await handleOpenNote(displayedNote.noteID);
+    };
+
+  const handleDeleteNoteTag = async (tagID: string) => {
+    if (displayedNote === null) {
+      return;
+    }
+    setAppState("loading...");
+    const res = await deleteTag(displayedNote.noteID, tagID);
     if (!res.success) {
       console.log(res.message);
       setAppState("error");
       setTimeout(() => setAppState(""), 750);
       return;
     }
-    if (displayedNote === null) {
-      return;
-    }
+    setAppState("done!");
+    setTimeout(() => setAppState(""), 750);
     await handleOpenNote(displayedNote.noteID);
   };
 
-  const handleTagClick = (
+  const handleNoteTagClick = (
     e: React.MouseEvent<HTMLLIElement, MouseEvent>,
     tag: api.Tag
   ) => {
@@ -165,7 +190,7 @@ export default function App() {
       }
       case e.ctrlKey: {
         e.stopPropagation();
-        handleDeleteTag(tag.tagID);
+        handleDeleteNoteTag(tag.tagID);
         return;
       }
     }
@@ -173,30 +198,7 @@ export default function App() {
 
   return (
     <>
-      {/* <header>
-        <div className="header-content">
-          <div className="header-left">
-            <h3
-              className="logo"
-              onClick={() => {
-                setQuery("");
-                setDisplayedNote(null);
-              }}
-            >
-              Quicknotes
-            </h3>
-            <span className="app-state">{appState}</span>
-          </div>
-          <div>
-            logged in as {fullname}{" "}
-            <button className="button" onClick={logout}>
-              logout
-            </button>
-          </div>
-        </div>
-      </header> */}
-
-      <main>
+      <main className="app">
         <Allotment
           className="main-content"
           defaultSizes={sizes}
@@ -211,14 +213,25 @@ export default function App() {
               query={query}
               onChange={(e) => setQuery(e.target.value)}
             />
-            <NoteList
-              notes={notes}
-              displayedNoteID={displayedNote?.noteID}
-              onNoteClick={handleClickNoteListItem}
-              onNoteCreate={handleCreateNote}
-              onSaveTitle={handleSaveNoteTitle}
-              onSaveContent={handleSaveNoteContent}
-            />
+            <Allotment
+              className="side-panel-upper"
+              defaultSizes={[7, 3]}
+              vertical
+            >
+              <Allotment.Pane>
+                <NoteList
+                  notes={notes}
+                  displayedNoteID={displayedNote?.noteID}
+                  onNoteClick={handleClickNoteListItem}
+                  onNoteCreate={handleCreateNote}
+                  onSaveTitle={handleSaveNoteTitle}
+                  onSaveContent={handleSaveNoteContent}
+                />
+              </Allotment.Pane>
+              <Allotment.Pane>
+                <TagList tags={tags} />
+              </Allotment.Pane>
+            </Allotment>
           </Allotment.Pane>
 
           <Allotment.Pane minSize={300}>
@@ -237,11 +250,12 @@ export default function App() {
               />
             </div>
             {displayedNote && (
-              <TagList
+              <NoteTagList
                 key={displayedNote.noteID}
                 tags={displayedNote.tags}
-                onSave={handleAddTag(displayedNote.noteID)}
-                onTagClick={handleTagClick}
+                onAdd={handleAddNoteTag(displayedNote.noteID)}
+                onUpdate={handleUpdateNoteTag(displayedNote.noteID)}
+                onTagClick={handleNoteTagClick}
               />
             )}
             <Markdown
@@ -305,8 +319,8 @@ function NoteList({
   onSaveContent,
 }: NoteListProps) {
   return (
-    <>
-      <div className="note-list-header">
+    <div className="list-wrapper">
+      <div className="list-header">
         <span>Notes</span>
         <button className="button small" onClick={onNoteCreate}>
           +
@@ -316,7 +330,7 @@ function NoteList({
         {notes?.map((note) => (
           <li
             key={note.noteID}
-            className={cn("note-list-item", {
+            className={cn("list-item", {
               active: note.noteID === displayedNoteID,
             })}
             onClickCapture={onNoteClick?.(note.noteID)}
@@ -330,28 +344,62 @@ function NoteList({
           </li>
         ))}
       </ul>
-      <button
-        className="button save-button"
-        onClick={onSaveContent}
-        disabled={displayedNoteID === undefined}
-      >
-        Save
-      </button>
-    </>
+      <div className="save-button-wrapper">
+        <button
+          className="button save-button"
+          onClick={onSaveContent}
+          disabled={displayedNoteID === undefined}
+        >
+          Save
+        </button>
+      </div>
+    </div>
   );
 }
 
-export interface TagListProps {
+interface TagListProps {
+  tags: api.Tag[];
+  onClick?: (tagID: string) => React.MouseEventHandler<HTMLLIElement>;
+  onSave?: (tagID: string, props: OnSaveProps) => any;
+}
+
+function TagList({ tags, onClick, onSave }: TagListProps) {
+  return (
+    <div className="list-wrapper">
+      <div className="list-header">
+        <span>Tags</span>
+        <ul className="tag-list">
+          {tags.map((tag) => (
+            <li
+              key={tag.tagID}
+              className="list-item"
+              onClickCapture={onClick?.(tag.tagID)}
+            >
+              <EditableText
+                defaultValue={tag.title}
+                onSave={(props) => onSave?.(tag.tagID, props)}
+                className="note-list-item-title"
+              />
+              {tag.title}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+export interface NoteTagListProps {
   tags: api.Tag[];
   onUpdate?: (tagID: string, title: string) => any;
-  onSave?: (title: string) => any;
+  onAdd?: (title: string) => any;
   onTagClick?: (
     e: React.MouseEvent<HTMLLIElement, MouseEvent>,
     tag: api.Tag
   ) => any;
 }
 
-function TagList({ tags, onUpdate, onSave, onTagClick }: TagListProps) {
+function NoteTagList({ tags, onUpdate, onAdd, onTagClick }: NoteTagListProps) {
   const [showNewTag, setShowNewTag] = useState(false);
 
   return (
@@ -380,7 +428,7 @@ function TagList({ tags, onUpdate, onSave, onTagClick }: TagListProps) {
             onSave={({ value }) => {
               console.log("on save fired");
               setShowNewTag(false);
-              onSave?.(value);
+              onAdd?.(value);
             }}
           />
         </li>

@@ -5,15 +5,17 @@ import { makeSuccessful, Optional } from "../utils/Optional";
 function parseQuery(query: string): api.FindQueryParams {
   const tags = [...query.matchAll(/tag:#(\w*)/g)].map((match) => match[1]);
 
-  const content = query.replaceAll(/\s*tag:#\w*\s*/g, " ");
+  const title = query.replaceAll(/\s*tag:#\w*\s*/g, " ");
 
-  console.log("query: ", { content, tags });
+  console.log("query: ", { title, tags });
 
-  return { content, tags };
+  return { title, tags };
 }
 
 export default function useNotes() {
   const [notes, setNotes] = useState<api.NoteMeta[]>([]);
+
+  const [tags, setTags] = useState<api.Tag[]>([]);
 
   const [query, setQuery] = useState<string>("");
 
@@ -36,6 +38,20 @@ export default function useNotes() {
       .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
 
     setNotes(sorted);
+  };
+
+  const fetchTags = async () => {
+    const res = await api.tag.getAll();
+
+    if (!res.success) {
+      // handle error
+      console.log(res.message);
+      return;
+    }
+
+    const tags = res.value;
+
+    setTags(tags);
   };
 
   const createNote = async (): Promise<Optional<api.Note>> => {
@@ -66,8 +82,49 @@ export default function useNotes() {
     return res;
   };
 
+  const addTag = async (noteID: string, title: string) => {
+    const res = await api.note.addTag(noteID, title);
+    if (res.success) {
+      await fetchTags();
+    }
+    return res;
+  };
+
+  const updateTag = async (noteID: string, tagID: string, title: string) => {
+    const res = await api.note.editTag(noteID, tagID, title);
+    if (res.success) {
+      await fetchTags();
+    }
+    return res;
+  };
+
+  const deleteTag = async (noteID: string, tagID: string) => {
+    const res = await api.note.deleteTag(noteID, tagID);
+    if (res.success) {
+      await fetchTags();
+    }
+    return res;
+  };
+
+  const updateTagGlobal = async (tag: api.Tag) => {
+    const res = await api.tag.edit(tag);
+    if (res.success) {
+      await fetchTags();
+    }
+    return res;
+  };
+
+  const deleteTagGlobal = async (tagID: string) => {
+    const res = await api.tag.delete(tagID);
+    if (res.success) {
+      await fetchTags();
+    }
+    return res;
+  };
+
   useEffect(() => {
     fetchNotes();
+    fetchTags();
   }, [query]);
 
   return {
@@ -76,10 +133,13 @@ export default function useNotes() {
     createNote,
     updateNote,
     deleteNote,
+    addTag,
+    updateTag,
+    deleteTag,
+    tags,
+    updateTagGlobal,
+    deleteTagGlobal,
     query,
     setQuery,
-    addTag: api.tag.add,
-    editTag: api.tag.edit,
-    deleteTag: api.tag.delete,
   };
 }

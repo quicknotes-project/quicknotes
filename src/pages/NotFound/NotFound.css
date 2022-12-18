@@ -2,20 +2,21 @@
   margin: 2em 2em;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 2em;
 }
 
-.not-found-page h1 {
+.status-code {
   margin: 0;
   font: 7rem var(--ff-serif);
   opacity: .3;
 }
 
-.not-found-page h2 {
+.status-description h2 {
   margin: 0;
   font: 2rem var(--ff-serif);
 }
 
-.not-found-page span {
+.status-description span {
   font-size: 1rem;
 }

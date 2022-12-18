@@ -5,7 +5,7 @@
   text-transform: capitalize;
 }
 
-main {
+.app {
   flex: 1 1 0;
   display: flex;
   flex-direction: column;
@@ -19,13 +19,18 @@ main {
 }
 
 .side-panel {
-  padding: .3em 1em 0;
+  padding: .3em 0 0;
   display: flex;
   flex-direction: column;
 }
 
+.side-panel-upper {
+  overflow-y: scroll;
+}
+
 .search-wrapper {
   margin-block: .3em;
+  padding-inline: .8em;
 }
 
 .search-bar {
@@ -40,6 +45,13 @@ main {
   color: var(--color);
 }
 
+.list-wrapper {
+  height: 100%;
+  overflow: auto;
+  padding-inline: 1em;
+  padding-bottom: 3em;
+}
+
 .note-list {
   margin: 0;
   padding: 0;
@@ -51,7 +63,7 @@ main {
   /* height: 100%; */
 }
 
-.note-list-header {
+.list-header {
   cursor: default;
   user-select: none;
   margin-block: .3em;
@@ -60,7 +72,7 @@ main {
   align-items: center;
 }
 
-.note-list-header span {
+.list-header span {
   font: bold 1.1rem var(--ff-sans)
 }
 
@@ -76,7 +88,7 @@ main {
   font: inherit;
 }
 
-.note-list-item {
+.list-item {
   cursor: pointer;
   position: relative;
   padding-left: .4em;
@@ -84,18 +96,30 @@ main {
   user-select: none;
 }
 
-.note-list-item:hover {
+.list-item:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-.note-list-item.active {
+.list-item.active {
   background-color: var(--accent);
   color: var(--accent-color)
 }
 
+.save-button-wrapper {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  padding-inline: .5em;
+  margin-block: .5em;
+}
+
 .save-button {
   width: 100%;
-  margin-block: .5em;
+}
+
+.save-button:disabled {
+  display: none;
 }
 
 .note-title-wrapper {
