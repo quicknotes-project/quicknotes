@@ -1,21 +1,13 @@
-.header-content {
-  width: 100%;
-  padding-left: 2em;
-}
-
-.header-content {
-  padding-right: 2em;
-}
-
 header {
-  /* height: 3em; */
   display: flex;
   justify-content: center;
-  background-color: rgb(0, 0, 0, 0.5);
+  background-color: var(--darkest);
 }
 
 .header-content {
+  width: 100%;
   margin-block: .5em;
+  padding-inline: 1.2em;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -40,8 +32,6 @@ header {
 }
 
 main {
-  /* height: 100%; */
-  /* width: 100%; */
   flex: 1 1 0;
   display: flex;
   flex-direction: column;
@@ -52,6 +42,12 @@ main {
 .main-content {
   height: 100%;
   width: 100%;
+}
+
+.side-panel {
+  padding: .3em 1em 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .search-wrapper {
@@ -81,17 +77,17 @@ main {
 
 .note-list {
   margin: 0;
-  margin-top: .5em;
-  margin-inline: 2em;
   padding: 0;
   list-style-type: none;
   display: flex;
   flex-direction: column;
   gap: .3em;
+  overflow-y: auto;
   /* height: 100%; */
 }
 
 .note-list-header {
+  margin-block: .3em;
   display: flex;
   gap: 1em;
   align-items: center;
@@ -121,9 +117,18 @@ main {
   user-select: none;
 }
 
-.note-list-item.active,
 .note-list-item:hover {
   background-color: rgba(255, 255, 255, 0.3);
+}
+
+.note-list-item.active {
+  background-color: var(--accent);
+  color: var(--accent-color)
+}
+
+.save-button {
+  width: 100%;
+  margin-block: .5em;
 }
 
 .note-title-wrapper {

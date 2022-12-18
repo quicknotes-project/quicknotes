@@ -54,7 +54,7 @@
   width: 14em;
   border: 2px solid var(--medium);
   border-radius: .2em;
-  background-color: var(--dark);
+  background-color: var(--darker);
   color: var(--color);
 }
 

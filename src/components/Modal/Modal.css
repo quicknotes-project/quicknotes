@@ -19,7 +19,6 @@
   align-items: center;
   gap: .3em;
   background-color: #ddd;
-  box-shadow: var(--box-shadow);
 }
 
 .modal-header {

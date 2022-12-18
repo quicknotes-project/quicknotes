@@ -5,7 +5,9 @@ import { makeSuccessful, Optional } from "../utils/Optional";
 function parseQuery(query: string): api.FindQueryParams {
   const tags = [...query.matchAll(/tag:#(\w*)/g)].map((match) => match[1]);
 
-  const content = query.replaceAll(/tag:#\w*\s/g, "");
+  const content = query.replaceAll(/\s*tag:#\w*\s*/g, " ");
+
+  console.log("query: ", { content, tags });
 
   return { content, tags };
 }
@@ -16,8 +18,6 @@ export default function useNotes() {
   const [query, setQuery] = useState<string>("");
 
   const fetchNotes = async () => {
-    console.log(`fetching notes, query: ${query}`);
-
     const res =
       query.trim() !== ""
         ? await api.find(parseQuery(query))
@@ -38,18 +38,13 @@ export default function useNotes() {
     setNotes(sorted);
   };
 
-  const getNote = async (noteID: string): Promise<Optional<api.Note>> => {
-    return api.note.get(noteID);
-  };
-
   const createNote = async (): Promise<Optional<api.Note>> => {
     const res = await api.note.create();
     if (!res.success) {
       return res;
     }
-    const note = res.value;
-    setNotes((state) => [note, ...state]);
-    return makeSuccessful(note);
+    await fetchNotes();
+    return makeSuccessful(res.value);
   };
 
   const updateNote = async (
@@ -65,26 +60,10 @@ export default function useNotes() {
 
   const deleteNote = async (noteID: string): Promise<Optional<void>> => {
     const res = await api.note.delete(noteID);
-    if (!res.success) {
-      return res;
+    if (res.success) {
+      await fetchNotes();
     }
-    await fetchNotes();
     return res;
-  };
-
-  const addTag = async (
-    noteID: string,
-    title: string
-  ): Promise<Optional<void>> => {
-    return api.tag.add(noteID, title);
-  };
-
-  const editTag = async (tag: api.Tag): Promise<Optional<void>> => {
-    return api.tag.edit(tag);
-  };
-
-  const deleteTag = async (tagID: string): Promise<Optional<void>> => {
-    return api.tag.delete(tagID);
   };
 
   useEffect(() => {
@@ -93,14 +72,14 @@ export default function useNotes() {
 
   return {
     notes,
-    getNote,
+    getNote: api.note.get,
     createNote,
     updateNote,
     deleteNote,
     query,
     setQuery,
-    addTag,
-    editTag,
-    deleteTag,
+    addTag: api.tag.add,
+    editTag: api.tag.edit,
+    deleteTag: api.tag.delete,
   };
 }

@@ -1,31 +1,25 @@
 /*    ----    Global variables    ----    */
 
 :root {
-  --bg-color: #ddd;
-  --accent-bg-color: #666;
+  --black: #0d1117;
+  --darkest: rgb(0, 0, 0, 0.5);
   --darker: rgb(24, 8, 35);
   --dark: rgb(56, 19, 80);
   --medium: rgb(80, 25, 117);
   --light: rgb(136, 95, 163);
   --lighter: rgb(181, 149, 203);
   --lightest: rgb(221, 202, 234);
-
+  --accent: rgb(247, 221, 136);
 
   --color: white;
   --ph-color: gray;
-  --accent-color: white;
+  --accent-color: black;
   --link-color: rgb(247, 221, 136);
   --link-hover-color: white;
   --accent-link-color: #84bef8;
   --accent-link-hover-color: white;
 
-  --border-wide: 3px;
-  --border-thin: 1px;
-
-  --border-color: #e3e3e3;
-
-  --box-shadow-color: rgba(0, 0, 0, 0.5);
-  --box-shadow: .4em .4em var(--box-shadow-color);
+  --separator-border: rgba(128, 128, 128, 0.35);
 
   --ff-serif: 'Source Serif Pro', serif;
   --ff-sans: 'Source Sans Pro', sans-serif;
@@ -75,6 +69,11 @@ h3 {
   font-size: .9rem;
   background-color: var(--medium);
   color: var(--color)
+}
+
+.button.small {
+  padding-block: .2em;
+  padding-inline: .6em;
 }
 
 .button:hover {
