@@ -1,3 +1,7 @@
 .dashboard {
   padding-left: 1em;
 }
+
+.user-form label {
+  display: none;
+}

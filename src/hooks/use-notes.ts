@@ -124,8 +124,12 @@ export default function useNotes() {
 
   useEffect(() => {
     fetchNotes();
-    fetchTags();
   }, [query]);
+
+  useEffect(() => {
+    fetchNotes();
+    fetchTags();
+  }, []);
 
   return {
     notes,
