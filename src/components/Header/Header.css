@@ -1,0 +1,29 @@
+header {
+  height: 3.2em;
+  display: flex;
+  justify-content: center;
+  background-color: var(--darkest);
+}
+
+.header-content {
+  width: 100%;
+  margin-block: .5em;
+  padding-inline: 1.2em;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: .5em;
+}
+
+.logo {
+  cursor: pointer;
+  user-select: none;
+  font: bold 1.5rem var(--ff-serif);
+}

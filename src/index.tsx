@@ -3,7 +3,10 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import RequireAuth from "./routing/RequireAuth";
 import { AuthProvider } from "./contexts/AuthContext";
+import { AppStateProvider } from "./contexts/AppContext";
 import "./index.css";
+import Header from "./components/Header";
+import NotFound from "./pages/NotFound";
 
 const AuthPage = React.lazy(() => import("./pages/AuthPage"));
 const App = React.lazy(() => import("./App"));
@@ -13,33 +16,24 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/auth" element={<AuthPage />} />
-          <Route
-            path="/"
-            element={
-              <RequireAuth>
-                <App />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="*"
-            element={
-              <RequireAuth>
-                <App />
-              </RequireAuth>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+    <AppStateProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <Header />
+          <Routes>
+            <Route path="/auth" element={<AuthPage />} />\
+            <Route
+              path="/"
+              element={
+                <RequireAuth>
+                  <App />
+                </RequireAuth>
+              }
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+    </AppStateProvider>
   </React.StrictMode>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-// reportWebVitals();

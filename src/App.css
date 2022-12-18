@@ -1,34 +1,8 @@
-header {
-  display: flex;
-  justify-content: center;
-  background-color: var(--darkest);
-}
-
-.header-content {
-  width: 100%;
-  margin-block: .5em;
-  padding-inline: 1.2em;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-}
-
 @media screen and (min-width: 500px) {}
 
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 1em;
-}
-
-.display-state {
+.app-state {
   opacity: .7;
   text-transform: capitalize;
-}
-
-.logo {
-  font: bold 1.5rem var(--ff-serif);
 }
 
 main {
@@ -66,15 +40,6 @@ main {
   color: var(--color);
 }
 
-.search-bar:focus {
-  outline: none;
-  border-color: var(--link-color);
-}
-
-.search-bar::placeholder {
-  content: 'Search...';
-}
-
 .note-list {
   margin: 0;
   padding: 0;
@@ -87,6 +52,8 @@ main {
 }
 
 .note-list-header {
+  cursor: default;
+  user-select: none;
   margin-block: .3em;
   display: flex;
   gap: 1em;
@@ -118,7 +85,7 @@ main {
 }
 
 .note-list-item:hover {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .note-list-item.active {
@@ -134,7 +101,7 @@ main {
 .note-title-wrapper {
   padding-top: .3em;
   padding-left: .5em;
-  background-color: #0d1117;
+  background-color: var(--black);
   font: 2rem var(--ff-serif);
   color: var(--color);
 }
@@ -148,7 +115,7 @@ main {
   align-items: center;
   gap: .5em;
   list-style-type: none;
-  background-color: #0d1117;
+  background-color: var(--black);
 }
 
 .note-tag {
@@ -157,11 +124,12 @@ main {
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: .2em;
   font-size: 1.5rem;
-  color: var(--light);
+  color: var(--light-color);
 }
 
 .note-tag:hover {
-  color: white;
+  cursor: pointer;
+  color: var(--link-hover-color);
   text-decoration: underline;
 }
 

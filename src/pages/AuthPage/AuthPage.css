@@ -1,10 +1,8 @@
 .auth-container {
   position: absolute;
-  top: 7em;
+  top: 50%;
   left: 50%;
-  translate: -50% 0;
-  width: min-content;
-  height: min-content;
+  translate: -50% -80%;
   padding: 1em 1.5em;
   display: flex;
   flex-direction: column;
@@ -23,6 +21,8 @@
 }
 
 .auth-subtitle {
+  display: flex;
+  gap: .3em;
   font-style: italic;
   font-size: .8rem;
 }
@@ -70,12 +70,5 @@
 
 .error-message {
   font: italic .9rem serif;
-  color: red;
+  color: var(--invalid-color);
 }
-
-/* .error-message {
-  font-family: serif;
-  font-style: normal;
-  background-color: rgb(174, 42, 42, .5);
-  color: white
-} */

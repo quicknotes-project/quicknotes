@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
-import { useAuth } from "./contexts/AuthContext";
 import useNotes from "./hooks/use-notes";
 import * as api from "./services/backend";
 import { cn, renderIf } from "./utils";
@@ -11,15 +10,12 @@ import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 
 import { OnSaveProps } from "./components/ui/EditableText";
+import { useAppState } from "./contexts/AppContext";
 const EditableText = React.lazy(() => import("./components/ui/EditableText"));
 
 const Markdown = React.lazy(() => import("./components/Markdown"));
 
-type AppState = "" | "loading..." | "saving..." | "done!" | "error";
-
 export default function App() {
-  const { fullname, logout } = useAuth();
-
   const {
     notes,
     getNote,
@@ -34,7 +30,7 @@ export default function App() {
 
   const [displayedNote, setDisplayedNote] = useState<Maybe<api.Note>>(null);
 
-  const [appState, setAppState] = useState<AppState>("");
+  const { appState, setAppState } = useAppState();
 
   const [sizes, setSizes] = useState([3, 7]);
 
@@ -177,11 +173,19 @@ export default function App() {
 
   return (
     <>
-      <header>
+      {/* <header>
         <div className="header-content">
           <div className="header-left">
-            <h3 className="logo">Quicknotes</h3>
-            <span className="display-state">{appState}</span>
+            <h3
+              className="logo"
+              onClick={() => {
+                setQuery("");
+                setDisplayedNote(null);
+              }}
+            >
+              Quicknotes
+            </h3>
+            <span className="app-state">{appState}</span>
           </div>
           <div>
             logged in as {fullname}{" "}
@@ -190,7 +194,7 @@ export default function App() {
             </button>
           </div>
         </div>
-      </header>
+      </header> */}
 
       <main>
         <Allotment
@@ -225,10 +229,7 @@ export default function App() {
             >
               <EditableText
                 readonly={displayedNote === null}
-                defaultValue={
-                  notes.find(({ noteID }) => noteID === displayedNote?.noteID)
-                    ?.title || "New note..."
-                }
+                defaultValue={displayedNote?.title || "New note..."}
                 className={cn("note-title", {
                   placeholder: displayedNote === null,
                 })}
@@ -259,9 +260,6 @@ export default function App() {
               }}
               preview={displayedNote === null ? "preview" : "edit"}
               hideToolbar={displayedNote === null}
-              style={{
-                cursor: displayedNote === null ? "pointer" : "initial",
-              }}
             />
           </Allotment.Pane>
         </Allotment>
@@ -280,7 +278,7 @@ function SearchBar({ query, onChange }: SearchBarProps) {
     <div className="search-wrapper">
       <input
         type="text"
-        className="search-bar"
+        className="input search-bar"
         placeholder="Search..."
         value={query}
         onChange={onChange}
@@ -335,7 +333,7 @@ function NoteList({
       <button
         className="button save-button"
         onClick={onSaveContent}
-        disabled={displayedNoteID === null}
+        disabled={displayedNoteID === undefined}
       >
         Save
       </button>

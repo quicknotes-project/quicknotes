@@ -10,14 +10,17 @@
   --lighter: rgb(181, 149, 203);
   --lightest: rgb(221, 202, 234);
   --accent: rgb(247, 221, 136);
+  --inactive: gray;
 
   --color: white;
   --ph-color: gray;
-  --accent-color: black;
+  --light-color: rgb(168, 70, 233);
+  --accent-color: #0a0a0a;
   --link-color: rgb(247, 221, 136);
   --link-hover-color: white;
   --accent-link-color: #84bef8;
   --accent-link-hover-color: white;
+  --invalid-color: red;
 
   --separator-border: rgba(128, 128, 128, 0.35);
 
@@ -63,7 +66,7 @@ h3 {
   cursor: pointer;
   width: min-content;
   padding-block: .5em;
-  padding-inline: 1em;
+  padding-inline: .7em;
   border: 2px solid var(--medium);
   border-radius: 9999px;
   font-size: .9rem;
@@ -73,7 +76,7 @@ h3 {
 
 .button.small {
   padding-block: .2em;
-  padding-inline: .6em;
+  padding-inline: .5em;
 }
 
 .button:hover {
@@ -82,16 +85,16 @@ h3 {
 }
 
 .button:active {
-  border-color: var(--link-color);
-  background-color: var(--link-color);
-  color: #333;
+  border-color: var(--accent);
+  background-color: var(--accent);
+  color: var(--accent-color);
 }
 
 .button:disabled,
 .button:disabled:active {
   cursor: not-allowed;
-  border-color: gray !important;
-  background-color: gray !important;
+  border-color: var(--inactive) !important;
+  background-color: var(--inactive) !important;
   color: var(--color);
 }
 
@@ -105,15 +108,8 @@ h3 {
   border-color: var(--link-color);
 }
 
-.pill {
-  padding: .2em .3em;
-  border-radius: .3em;
-  font-family: sans-serif;
-  color: white;
-}
-
 .placeholder {
-  color: gray;
+  color: var(--ph-color);
 }
 
 .slide-right {

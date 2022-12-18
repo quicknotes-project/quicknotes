@@ -1,0 +1,21 @@
+.not-found-page {
+  margin: 2em 2em;
+  display: flex;
+  align-items: center;
+  gap: 2em;
+}
+
+.not-found-page h1 {
+  margin: 0;
+  font: 7rem var(--ff-serif);
+  opacity: .3;
+}
+
+.not-found-page h2 {
+  margin: 0;
+  font: 2rem var(--ff-serif);
+}
+
+.not-found-page span {
+  font-size: 1rem;
+}

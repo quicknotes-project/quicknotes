@@ -1,4 +1,4 @@
-import { cn } from '../../../utils';
+import { cn } from "../../../utils";
 import {
   Changeable,
   Classable,
@@ -9,8 +9,7 @@ import {
   Placeholderable,
   Touchable,
   Validatable,
-} from '../../../types';
-import './Form.css';
+} from "../../../types";
 
 export default function Form() {
   return null;
@@ -54,12 +53,12 @@ function InputGroup({
       <input
         id={id || name || label}
         name={name || label}
-        type={type || 'text'}
+        type={type || "text"}
         value={value}
         onChange={onChange}
         disabled={disabled}
         className={cn(
-          'input',
+          "input",
           { valid: !!valid, invalid: !!invalid },
           className
         )}

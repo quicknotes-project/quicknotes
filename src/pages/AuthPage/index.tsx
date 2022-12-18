@@ -99,7 +99,7 @@ export default function AuthPage() {
         <h3 className="auth-title">{authMode}</h3>
 
         <div className="auth-subtitle">
-          Not registered yet?{" "}
+          <span>Not registered yet?</span>
           <div
             className="auth-switch link"
             onClick={() => {
