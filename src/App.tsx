@@ -125,9 +125,9 @@ export default function App() {
     };
 
   const handleAddNoteTag = (noteID: string) => async (title: string) => {
-    console.log("handleaddtag fired");
     if (!/^[\w-]{1,}$/.test(title)) {
-      console.log(`bad tag title ${title}`);
+      setAppState("error");
+      setTimeout(() => setAppState(""), 750);
       return;
     }
     const res = await addTag(noteID, title);
@@ -142,9 +142,6 @@ export default function App() {
 
   const handleUpdateNoteTag =
     (noteID: string) => async (tagID: string, title: string) => {
-      if (displayedNote === null) {
-        return;
-      }
       setAppState("loading...");
       const res = await updateTag(noteID, tagID, title);
       if (!res.success) {
@@ -155,15 +152,12 @@ export default function App() {
       }
       setAppState("done!");
       setTimeout(() => setAppState(""), 750);
-      await handleOpenNote(displayedNote.noteID);
+      await handleOpenNote(noteID);
     };
 
-  const handleDeleteNoteTag = async (tagID: string) => {
-    if (displayedNote === null) {
-      return;
-    }
+  const handleDeleteNoteTag = (noteID: string) => async (tagID: string) => {
     setAppState("loading...");
-    const res = await deleteTag(displayedNote.noteID, tagID);
+    const res = await deleteTag(noteID, tagID);
     if (!res.success) {
       console.log(res.message);
       setAppState("error");
@@ -172,7 +166,7 @@ export default function App() {
     }
     setAppState("done!");
     setTimeout(() => setAppState(""), 750);
-    await handleOpenNote(displayedNote.noteID);
+    await handleOpenNote(noteID);
   };
 
   const handleNoteTagClick = (
@@ -262,6 +256,20 @@ export default function App() {
                 })}
                 onSave={handleSaveNoteTitle}
               />
+              {renderIf(
+                displayedNote !== null,
+                <button
+                  className="button icon"
+                  onClick={() => {
+                    if (displayedNote === null) {
+                      return;
+                    }
+                    handleDeleteNote(displayedNote.noteID);
+                  }}
+                >
+                  del
+                </button>
+              )}
             </div>
             {displayedNote && (
               <NoteTagList
@@ -269,6 +277,7 @@ export default function App() {
                 tags={displayedNote.tags}
                 onAdd={handleAddNoteTag(displayedNote.noteID)}
                 onUpdate={handleUpdateNoteTag(displayedNote.noteID)}
+                onDelete={handleDeleteNoteTag(displayedNote.noteID)}
                 onTagClick={handleNoteTagClick}
               />
             )}
@@ -406,13 +415,20 @@ export interface NoteTagListProps {
   tags: api.Tag[];
   onUpdate?: (tagID: string, title: string) => any;
   onAdd?: (title: string) => any;
+  onDelete?: (tagID: string) => any;
   onTagClick?: (
     e: React.MouseEvent<HTMLLIElement, MouseEvent>,
     tag: api.Tag
   ) => any;
 }
 
-function NoteTagList({ tags, onUpdate, onAdd, onTagClick }: NoteTagListProps) {
+function NoteTagList({
+  tags,
+  onUpdate,
+  onAdd,
+  onDelete,
+  onTagClick,
+}: NoteTagListProps) {
   const [showNewTag, setShowNewTag] = useState(false);
 
   return (
@@ -427,6 +443,10 @@ function NoteTagList({ tags, onUpdate, onAdd, onTagClick }: NoteTagListProps) {
             defaultValue={tag.title}
             onBlur={() => setShowNewTag(false)}
             onSave={({ value }) => {
+              if (value.trim() === "") {
+                onDelete?.(tag.tagID);
+                return;
+              }
               onUpdate?.(tag.tagID, value);
             }}
           />

@@ -11,6 +11,9 @@
   --lightest: rgb(221, 202, 234);
   --accent: rgb(247, 221, 136);
   --inactive: gray;
+  --danger: #7e0b0b;
+  --danger-hover: #971111;
+  --danger-active: #ff0000;
 
   --color: white;
   --ph-color: gray;
@@ -91,8 +94,12 @@ h3 {
   background-color: var(--light);
 }
 
-.button:active {
+.input:focus,
+.button:focus {
   border-color: var(--accent);
+}
+
+.button:active {
   background-color: var(--accent);
   color: var(--accent-color);
 }
@@ -109,10 +116,33 @@ h3 {
   font-size: 1rem;
 }
 
-.input:focus,
-.button:focus {
+/* .button.danger {
+  border-color: var(--danger);
+  background-color: var(--danger);
+}
+
+.button.danger:hover {
+  border-color: var(--danger-hover);
+  background-color: var(--danger-hover);
+}
+
+.button.danger:focus,
+.button.danger:active {
   outline: none;
-  border-color: var(--link-color);
+  border-color: var(--danger-active);
+  background-color: var(--danger-active);
+} */
+
+.icon {
+  height: min-content;
+  padding-block: .3em;
+  padding-inline: .5em;
+  /* border: none; */
+  border-radius: .3em;
+  background-color: var(--medium);
+  text-transform: uppercase;
+  font: .9rem var(--ff-sans);
+  color: var(--color)
 }
 
 .placeholder {
