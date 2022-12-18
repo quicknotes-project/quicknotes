@@ -3,7 +3,8 @@
 :root {
   --bg-color: #ddd;
   --accent-bg-color: #666;
-  --dark: rgb(24, 8, 35);
+  --darker: rgb(24, 8, 35);
+  --dark: rgb(56, 19, 80);
   --medium: rgb(80, 25, 117);
   --light: rgb(136, 95, 163);
   --lighter: rgb(181, 149, 203);
@@ -53,7 +54,7 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--dark);
+  background-color: var(--darker);
 }
 
 /*    ----    UI config    ---    */

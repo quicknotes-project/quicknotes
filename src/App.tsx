@@ -15,21 +15,24 @@ const EditableText = React.lazy(() => import("./components/ui/EditableText"));
 
 const Markdown = React.lazy(() => import("./components/Markdown"));
 
-const Modal = React.lazy(() => import("./components/Modal"));
-
 type AppState = "" | "loading..." | "saving..." | "done!" | "error";
 
 export default function App() {
   const { fullname, logout } = useAuth();
 
-  const { notes, fetchNotes, getNote, createNote, updateNote, deleteNote } =
-    useNotes();
+  const {
+    notes,
+    getNote,
+    createNote,
+    updateNote,
+    deleteNote,
+    query,
+    setQuery,
+  } = useNotes();
 
   const [displayedNote, setDisplayedNote] = useState<Maybe<api.Note>>(null);
 
   const [appState, setAppState] = useState<AppState>("");
-
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const [sizes, setSizes] = useState([3, 7]);
 
@@ -58,7 +61,6 @@ export default function App() {
     }
     setAppState("done!");
     setTimeout(() => setAppState(""), 750);
-    await fetchNotes();
   };
 
   const handleSaveNoteTitle = async ({ value, previousValue }: OnSaveProps) => {
@@ -104,6 +106,19 @@ export default function App() {
 
   const handleAddTag = async (title: string) => {};
 
+  const handleTagClick = (
+    e: React.MouseEvent<HTMLLIElement, MouseEvent>,
+    tag: api.Tag
+  ) => {
+    if (!e.ctrlKey) {
+      return;
+    }
+    setQuery((state) => {
+      const newQuery = `${state} tag:#${tag.title} `;
+      return newQuery.trimStart();
+    });
+  };
+
   return (
     <>
       <header>
@@ -126,6 +141,15 @@ export default function App() {
           <Allotment defaultSizes={sizes} onChange={setSizes}>
             <Allotment.Pane minSize={300} visible={!isMobile}>
               <ul className="note-list">
+                <div className="search-wrapper">
+                  <input
+                    type="text"
+                    className="search-bar"
+                    placeholder="Search..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                  />
+                </div>
                 <div className="note-list-header">
                   <span>Notes</span>
                   <button className="button" onClick={handleCreateNote}>
@@ -194,6 +218,7 @@ export default function App() {
                   key={displayedNote.noteID}
                   tags={displayedNote.tags}
                   onSave={handleAddTag}
+                  onTagClick={handleTagClick}
                 />
               )}
               <Markdown
@@ -213,13 +238,6 @@ export default function App() {
                 }}
                 preview={displayedNote === null ? "preview" : "edit"}
                 hideToolbar={displayedNote === null}
-                onClickCapture={() => {
-                  if (displayedNote !== null) {
-                    return;
-                  }
-                  console.log("markdown onclick fired");
-                  handleCreateNote();
-                }}
                 style={{
                   cursor: displayedNote === null ? "pointer" : "initial",
                 }}
@@ -236,15 +254,23 @@ export interface TagListProps {
   tags: api.Tag[];
   onUpdate?: (tagID: string, title: string) => any;
   onSave?: (title: string) => any;
+  onTagClick?: (
+    e: React.MouseEvent<HTMLLIElement, MouseEvent>,
+    tag: api.Tag
+  ) => any;
 }
 
-function TagList({ tags, onUpdate, onSave }: TagListProps) {
+function TagList({ tags, onUpdate, onSave, onTagClick }: TagListProps) {
   const [showNewTag, setShowNewTag] = useState(false);
 
   return (
     <ul className="note-tag-list">
       {tags.map((tag) => (
-        <li key={tag.tagID} className="note-tag">
+        <li
+          key={tag.tagID}
+          className="note-tag"
+          onClick={(e) => onTagClick?.(e, tag)}
+        >
           <EditableText
             defaultValue={tag.title}
             onBlur={() => setShowNewTag(false)}

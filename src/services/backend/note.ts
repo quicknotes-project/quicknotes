@@ -5,7 +5,6 @@ import { isNote, isNoteMeta, Note, NoteMeta, NoteUpdate } from "./types";
 async function getAllNotes(): Promise<Optional<NoteMeta[]>> {
   const res = await fetch(routes.notes(), {
     headers: {
-      "Content-Type": "application/json",
       "ngrok-skip-browser-warning": "skip",
     },
   });
