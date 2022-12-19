@@ -115,7 +115,7 @@ export default function AuthPage() {
         </div>
       </div>
 
-      <form className="auth-form" onSubmit={handleSubmit}>
+      <form className="auth-form" onSubmit={handleSubmit} autoComplete="off">
         {fields.map((field, index) => (
           <Form.InputGroup
             key={`auth-field-${index}`}
