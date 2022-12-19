@@ -1,25 +1,5 @@
 const prefix = "/api";
 
-export interface FindQueryParams
-  extends Record<string, undefined | string | string[]> {
-  title?: string;
-  tags?: string | string[];
-}
-
-function stringifyParams(
-  params: Record<string, undefined | string | string[]>
-) {
-  const pairs = Object.entries(params).filter(
-    ([, value]) => typeof value !== "undefined"
-  ) as [string, string | string[]][];
-  if (pairs.length === 0) return "";
-  const usp = new URLSearchParams();
-  pairs.forEach(([key, value]) => {
-    usp.set(key, typeof value === "string" ? value : value.join(","));
-  });
-  return "?" + usp.toString();
-}
-
 const routes = {
   register: () => `${prefix}/register`,
   login: () => `${prefix}/login`,
@@ -36,8 +16,8 @@ const routes = {
     tagID
       ? `${prefix}/tag?${new URLSearchParams({ tagID }).toString()}`
       : `${prefix}/tag`,
-  find: (params: FindQueryParams) => {
-    return `${prefix}/find${stringifyParams(params)}`;
+  find: (query: string) => {
+    return `${prefix}/find?${query}`;
   },
 };
 

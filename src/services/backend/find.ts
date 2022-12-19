@@ -1,12 +1,30 @@
-import routes, { FindQueryParams } from "../../config/routes";
+import routes from "../../config/routes";
 import { makeFailed, makeSuccessful, Optional } from "../../utils/Optional";
 import { isNoteMeta, NoteMeta } from "./types";
 
-export type { FindQueryParams } from "../../config/routes";
+export interface FindQueryParams
+  extends Record<string, string | string[] | undefined> {
+  title?: string;
+  tags?: string | string[];
+}
+
+function stringifyParams(params: FindQueryParams): string {
+  if (!params.title || !params.tags) {
+    return "";
+  }
+  return Object.entries(params)
+    .reduce((acc, [key, value]) => {
+      const valueStr = Array.isArray(value) ? value.join(",") : value;
+      return [...acc, `${key}=${valueStr}`];
+    }, [] as string[])
+    .join("&");
+}
 
 export async function find(
-  query: FindQueryParams
+  params: FindQueryParams
 ): Promise<Optional<NoteMeta[]>> {
+  const query = stringifyParams(params);
+  console.log(`stringified params into query: ${query}`);
   const res = await fetch(routes.find(query), {
     headers: {
       "ngrok-skip-browser-warning": "skip",

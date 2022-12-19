@@ -7,7 +7,7 @@ function parseQuery(query: string): api.FindQueryParams {
 
   const title = query.replaceAll(/\s*tag:#\w*\s*/g, " ");
 
-  console.log("query: ", { title, tags });
+  console.log("parsed query params: ", { title, tags });
 
   return { title, tags };
 }
