@@ -76,6 +76,7 @@ export default function AuthPage() {
     if (authMode === "Sign up") {
       const res = await tryRegister({ username, fullname, password });
       if (!res.success) {
+        console.log("");
         setErrorMessage(res.message);
         setLoading(false);
         return;

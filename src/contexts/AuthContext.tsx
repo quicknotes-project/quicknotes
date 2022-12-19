@@ -34,13 +34,7 @@ export function AuthProvider({ children }: Nestable) {
   };
 
   const tryRegister = async (user: api.User): Promise<Optional<void>> => {
-    const res = await api.user.register(user);
-
-    if (!res.success) {
-      return res;
-    }
-
-    return tryFetch();
+    return api.user.register(user);
   };
 
   const tryLogin = async (
