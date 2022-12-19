@@ -125,7 +125,9 @@ export default function App() {
     };
 
   const handleAddNoteTag = (noteID: string) => async (title: string) => {
-    if (!/^[\w-]{1,}$/.test(title)) {
+    console.log("add note tag fired");
+
+    if (/\#/.test(title)) {
       setAppState("error");
       setTimeout(() => setAppState(""), 750);
       return;
@@ -207,14 +209,7 @@ export default function App() {
       }
     };
 
-  const handleTagSave = async (
-    tagID: string,
-    { value, previousValue }: OnSaveProps
-  ) => {
-    if (value === previousValue) {
-      return;
-    }
-
+  const handleTagSave = async (tagID: string, { value }: OnSaveProps) => {
     if (value === "") {
       setAppState("loading...");
       const res = await deleteTagGlobal(tagID);
@@ -453,7 +448,7 @@ function TagList({ tags, onClick, onSave }: TagListProps) {
 export interface NoteTagListProps {
   tags: api.Tag[];
   onUpdate?: (tagID: string, title: string) => any;
-  onAdd?: (title: string) => any;
+  onAdd?: (title: string) => Promise<any>;
   onDelete?: (tagID: string) => any;
   onTagClick?: (
     e: React.MouseEvent<HTMLLIElement, MouseEvent>,
@@ -499,8 +494,7 @@ function NoteTagList({
             onBlur={() => setShowNewTag(false)}
             onSave={({ value }) => {
               console.log("on save fired");
-              setShowNewTag(false);
-              onAdd?.(value);
+              onAdd?.(value).then(() => setShowNewTag(false));
             }}
           />
         </li>
