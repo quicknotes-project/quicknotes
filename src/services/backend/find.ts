@@ -9,7 +9,7 @@ export interface FindQueryParams
 }
 
 function stringifyParams(params: FindQueryParams): string {
-  if (!params.title || !params.tags) {
+  if (!params.title && !params.tags) {
     return "";
   }
   return Object.entries(params)

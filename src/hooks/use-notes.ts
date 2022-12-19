@@ -5,7 +5,10 @@ import { makeSuccessful, Optional } from "../utils/Optional";
 function parseQuery(query: string): api.FindQueryParams {
   const tags = [...query.matchAll(/tag:#(\w*)/g)].map((match) => match[1]);
 
-  const title = query.replaceAll(/\s*tag:#\w*\s*/g, " ");
+  const title = query
+    .replace(/\s*tag:#\w*\s*/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
   console.log("parsed query params: ", { title, tags });
 
