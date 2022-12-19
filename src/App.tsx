@@ -194,6 +194,9 @@ export default function App() {
     (tag: api.Tag) => (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
       switch (true) {
         case e.shiftKey: {
+          return;
+        }
+        default: {
           e.stopPropagation();
           setQuery((state) => {
             const newQuery = `${state} tag:#${tag.title} `;

@@ -96,6 +96,7 @@ h3 {
 
 .input:focus,
 .button:focus {
+  outline: none;
   border-color: var(--accent);
 }
 
