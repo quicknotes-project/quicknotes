@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { createContext, useContext } from "react";
 import { useStorage } from "../hooks/use-storage";
 import * as api from "../services/backend";
@@ -24,6 +25,8 @@ export function AuthProvider({ children }: Nestable) {
     const userOption = await api.user.fetch();
 
     if (!userOption.success) {
+      setUsername(null);
+      setFullname(null);
       return userOption;
     }
 
@@ -76,6 +79,10 @@ export function AuthProvider({ children }: Nestable) {
     tryUpdateUser,
     logout,
   };
+
+  useEffect(() => {
+    tryFetch();
+  }, []);
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
 }
