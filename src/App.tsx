@@ -207,6 +207,38 @@ export default function App() {
       }
     };
 
+  const handleTagSave = async (
+    tagID: string,
+    { value, previousValue }: OnSaveProps
+  ) => {
+    if (value === previousValue) {
+      return;
+    }
+
+    if (value === "") {
+      setAppState("loading...");
+      const res = await deleteTagGlobal(tagID);
+      if (!res.success) {
+        setAppState("error");
+        setTimeout(() => setAppState(""), 750);
+        return;
+      }
+      setAppState("done!");
+      setTimeout(() => setAppState(""), 750);
+      return;
+    }
+
+    setAppState("loading...");
+    const res = await updateTagGlobal(tagID, value);
+    if (!res.success) {
+      setAppState("error");
+      setTimeout(() => setAppState(""), 750);
+      return;
+    }
+    setAppState("done!");
+    setTimeout(() => setAppState(""), 750);
+  };
+
   return (
     <>
       <main className="app">
@@ -240,7 +272,11 @@ export default function App() {
                 />
               </Allotment.Pane>
               <Allotment.Pane>
-                <TagList tags={tags} onClick={handleTagClick} />
+                <TagList
+                  tags={tags}
+                  onClick={handleTagClick}
+                  onSave={handleTagSave}
+                />
               </Allotment.Pane>
             </Allotment>
           </Allotment.Pane>

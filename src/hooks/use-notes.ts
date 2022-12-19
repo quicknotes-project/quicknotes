@@ -106,8 +106,8 @@ export default function useNotes() {
     return res;
   };
 
-  const updateTagGlobal = async (tag: api.Tag) => {
-    const res = await api.tag.edit(tag);
+  const updateTagGlobal = async (tagID: string, title: string) => {
+    const res = await api.tag.edit({ tagID, title });
     if (res.success) {
       await fetchTags();
     }
